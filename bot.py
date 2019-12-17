@@ -5,7 +5,7 @@ from uuid import uuid4
 import sys
 
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler, CallbackContext
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, CallbackContext, Filters
 import numexpr
 from secure import BOT_TOKEN
 
@@ -16,12 +16,22 @@ logger = logging.getLogger(__name__)
 
 
 def start(update: Update, context: CallbackContext):
-    update.message.reply_text('Hi!')
+    update.message.reply_text(
+        'Привет! Я помогу найти значение математических выражений. Например, вы можете написать мне:\n'
+        '`2 + 4 * 5`\n'
+        '`12 / 3`\n'
+        '`sqrt(2)`\n'
+        '...и я дам ответ. Попробуйте!\n'
+        '\n'
+        'А еще я могу работать в инлайн-режиме: вы можете написать в любом чате `@calc_ubot 2 + 2`',
+        parse_mode='Markdown'
+    )
 
 
 def inlinequery(update: Update, context: CallbackContext):
     query = update.inline_query.query
-    print(query)
+    if not query:
+        return
     try:
         result = numexpr.evaluate(query).item()
     except Exception as e:
@@ -31,10 +41,18 @@ def inlinequery(update: Update, context: CallbackContext):
     query_results = [InlineQueryResultArticle(
         id=uuid4(),
         title=result,
-        input_message_content=InputTextMessageContent(f'{query} = {result}'), )]
+        input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
+    )]
 
     update.inline_query.answer(query_results)
 
+def dmquery(update: Update, context: CallbackContext):
+    query = update.message.text
+    try:
+        result = numexpr.evaluate(query).item()
+    except Exception as e:
+        result = 'Error!'
+    update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
 
 def error(update: Update, context: CallbackContext):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
@@ -50,9 +68,9 @@ def main():
     })
 
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler('start', start))
     dp.add_handler(InlineQueryHandler(inlinequery))
-
+    dp.add_handler(MessageHandler(Filters.text, dmquery))
     dp.add_error_handler(error)
 
     updater.start_polling()
