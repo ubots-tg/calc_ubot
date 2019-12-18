@@ -30,29 +30,30 @@ def start(update: Update, context: CallbackContext):
 
 def inlinequery(update: Update, context: CallbackContext):
     query = update.inline_query.query
-    if not query:
-        return
     try:
         result = numexpr.evaluate(query).item()
+        query_results = [InlineQueryResultArticle(
+            id=uuid4(),
+            title=result,
+            input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
+        )]
     except Exception as e:
         # exc_type, exc_value, exc_traceback = sys.exc_info()
         # result = f'{exc_type.__name__}: {str(exc_value)}'
-        result = 'Error!'
-    query_results = [InlineQueryResultArticle(
-        id=uuid4(),
-        title=result,
-        input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
-    )]
+        # result = 'Error!'
+        query_results = []
 
     update.inline_query.answer(query_results)
+
 
 def dmquery(update: Update, context: CallbackContext):
     query = update.message.text
     try:
         result = numexpr.evaluate(query).item()
+        update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
     except Exception as e:
-        result = 'Error!'
-    update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
+        update.message.reply_text('Error')
+
 
 def error(update: Update, context: CallbackContext):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
