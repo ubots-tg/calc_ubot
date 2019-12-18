@@ -17,13 +17,11 @@ logger = logging.getLogger(__name__)
 
 def start(update: Update, context: CallbackContext):
     update.message.reply_text(
-        'Привет! Я помогу найти значение математических выражений. Например, вы можете написать мне:\n'
+        'Привет! Я могу посчитать, например, вот это:\n'
         '`2 + 4 * 5`\n'
         '`12 / 3`\n'
-        '`sqrt(2)`\n'
-        '...и я дам ответ. Попробуйте!\n'
-        '\n'
-        'А еще я могу работать в инлайн-режиме: вы можете написать в любом чате `@calc_ubot 2 + 2`',
+        '`sqrt(4)`\n'
+        'Просто напишите мне любой пример!\n',
         parse_mode='Markdown'
     )
 
@@ -35,7 +33,8 @@ def inlinequery(update: Update, context: CallbackContext):
         query_results = [InlineQueryResultArticle(
             id=uuid4(),
             title=result,
-            input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
+            description=f'{query} = {result}',
+            input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', reply_markup='HTML')
         )]
     except Exception as e:
         # exc_type, exc_value, exc_traceback = sys.exc_info()
