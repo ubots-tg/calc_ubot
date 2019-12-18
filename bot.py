@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import logging
 from uuid import uuid4
-import sys
 
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, CallbackContext, Filters
@@ -30,27 +29,30 @@ def inlinequery(update: Update, context: CallbackContext):
     query = update.inline_query.query
     try:
         result = numexpr.evaluate(query).item()
+        if type(result) == float and result.is_integer():
+            result = int(result)
         query_results = [InlineQueryResultArticle(
             id=uuid4(),
             title=result,
             description=f'{query} = {result}',
-            input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', reply_markup='HTML')
+            input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
         )]
     except Exception as e:
-        # exc_type, exc_value, exc_traceback = sys.exc_info()
-        # result = f'{exc_type.__name__}: {str(exc_value)}'
-        # result = 'Error!'
         query_results = []
         diff_count = query.count('(') - query.count(')')
         if diff_count > 0:
             query += ')' * diff_count
             try:
                 result = numexpr.evaluate(query).item
-                query_results = [InlineQueryResultArticle(
-                                 id=uuid4(),
-                                 title=result,
-                                 input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
-                                )]
+                if type(result) == float and result.is_integer():
+                    result = int(result)
+                query_results = [
+                    InlineQueryResultArticle(
+                        id=uuid4(),
+                        title=result,
+                        input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
+                    )
+                ]
             except Exception:
                 query_results = []
 
@@ -61,6 +63,8 @@ def dmquery(update: Update, context: CallbackContext):
     query = update.message.text
     try:
         result = numexpr.evaluate(query).item()
+        if type(result) == float and result.is_integer():
+            result = int(result)
         update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
     except Exception as e:
         update.message.reply_text('Error')
