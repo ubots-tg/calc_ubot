@@ -42,6 +42,18 @@ def inlinequery(update: Update, context: CallbackContext):
         # result = f'{exc_type.__name__}: {str(exc_value)}'
         # result = 'Error!'
         query_results = []
+        diff_count = query.count('(') - query.count(')')
+        if diff_count > 0:
+            query += ')' * diff_count
+            try:
+                result = numexpr.evaluate(query).item
+                query_results = [InlineQueryResultArticle(
+                                 id=uuid4(),
+                                 title=result,
+                                 input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
+                                )]
+            except Exception:
+                query_results = []
 
     update.inline_query.answer(query_results)
 
