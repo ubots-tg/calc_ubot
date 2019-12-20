@@ -25,46 +25,43 @@ def start(update: Update, context: CallbackContext):
     )
 
 
-def inlinequery(update: Update, context: CallbackContext):
+def comp_expr(query: str):
+    result = numexpr.evaluate(query).item()
+    if type(result) == float and result.is_integer():
+        result = int(result)
+    return result
+
+
+def inline_query(update: Update, context: CallbackContext):
     query = update.inline_query.query
     try:
-        result = numexpr.evaluate(query).item()
-        if type(result) == float and result.is_integer():
-            result = int(result)
-        query_results = [InlineQueryResultArticle(
-            id=uuid4(),
-            title=result,
-            description=f'{query} = {result}',
-            input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
-        )]
-    except Exception as e:
-        query_results = []
+        result = comp_expr(query)
+    except Exception:
         diff_count = query.count('(') - query.count(')')
         if diff_count > 0:
             query += ')' * diff_count
             try:
-                result = numexpr.evaluate(query).item
-                if type(result) == float and result.is_integer():
-                    result = int(result)
-                query_results = [
-                    InlineQueryResultArticle(
-                        id=uuid4(),
-                        title=result,
-                        input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
-                    )
-                ]
+                result = comp_expr(query)
             except Exception:
-                query_results = []
-
+                result = None
+        else:
+            result = None
+    query_results = []
+    if result:
+        query_results.append(
+            InlineQueryResultArticle(
+                id=uuid4(),
+                title=f'{query} = {result}',
+                input_message_content=InputTextMessageContent(f'{query} = <b>{result}</b>', parse_mode='HTML')
+            )
+        )
     update.inline_query.answer(query_results)
 
 
-def dmquery(update: Update, context: CallbackContext):
+def dm_query(update: Update, context: CallbackContext):
     query = update.message.text
     try:
-        result = numexpr.evaluate(query).item()
-        if type(result) == float and result.is_integer():
-            result = int(result)
+        result = comp_expr(query)
         update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
     except Exception as e:
         update.message.reply_text('Error')
@@ -85,8 +82,8 @@ def main():
 
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
-    dp.add_handler(InlineQueryHandler(inlinequery))
-    dp.add_handler(MessageHandler(Filters.text, dmquery))
+    dp.add_handler(InlineQueryHandler(inline_query))
+    dp.add_handler(MessageHandler(Filters.text, dm_query))
     dp.add_error_handler(error)
 
     updater.start_polling()
