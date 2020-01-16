@@ -5,8 +5,10 @@ from uuid import uuid4
 
 from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, CallbackContext, Filters
-import numexpr
+
 from secure import BOT_TOKEN
+
+from expeval import ExpEval
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -25,29 +27,12 @@ def start(update: Update, context: CallbackContext):
     )
 
 
-def comp_expr(query: str):
-    result = numexpr.evaluate(query).item()
-    if type(result) == float and result.is_integer():
-        result = int(result)
-    return result
-
-
 def inline_query(update: Update, context: CallbackContext):
+    global expr_evaluator
     query = update.inline_query.query
-    try:
-        result = comp_expr(query)
-    except Exception:
-        diff_count = query.count('(') - query.count(')')
-        if diff_count > 0:
-            query += ')' * diff_count
-            try:
-                result = comp_expr(query)
-            except Exception:
-                result = None
-        else:
-            result = None
+    result, success = expr_evaluator.comp_exp
     query_results = []
-    if result:
+    if success:
         query_results.append(
             InlineQueryResultArticle(
                 id=uuid4(),
@@ -59,11 +44,12 @@ def inline_query(update: Update, context: CallbackContext):
 
 
 def dm_query(update: Update, context: CallbackContext):
+    global expr_evaluator
     query = update.message.text
-    try:
-        result = comp_expr(query)
+    result, success = expr_evaluator.comp_exp
+    if success:
         update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
-    except Exception as e:
+    else:
         update.message.reply_text('Error')
 
 
@@ -91,4 +77,5 @@ def main():
 
 
 if __name__ == '__main__':
+    expr_evaluator = ExpEval()
     main()
