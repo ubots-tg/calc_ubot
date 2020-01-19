@@ -50,7 +50,7 @@ class ExpEval:
             self.specific_operators = std_specific_operators
         else:
             self.specific_operators = specific_operators
-        self.pare_brackets = ["()", "{}"]
+        self.other_symbols = list("(){},;")  # They all 1 char length
 
         # execution levels)))
         self.execution_levels = set()
@@ -59,11 +59,11 @@ class ExpEval:
                 self.execution_levels.add(self.names[name]["level"])
         self.execution_levels = sorted(list(self.execution_levels), reverse=True)
 
-        # specific_symbols
-        self.specific_chars = set()
+        # operator_symbols
+        self.operator_symbols = set()
         for name in self.specific_operators:
             for ch in name:
-                self.specific_chars.add(ch)
+                self.operator_symbols.add(ch)
 
     def comp_exp(self, query):
         try:
@@ -76,7 +76,22 @@ class ExpEvalProcedure:
     def __init__(self, config: ExpEval, query):
         self.config = config
         self.query = query
+        # Tokenizer
+        self.char_map = [-1] * len(query)
+        self.checks = [
+            self.is_latin,
+            self.is_digit,
+            lambda ch: ch.isspace(),
+            lambda ch: ch in self.config.operator_symbols,
+            lambda ch: ch == "\x00",
+            lambda ch: ch in self.config.other_symbols
+        ]
         self.tokens = []
+
+    def get_ch(self, p) -> str:
+        if 0 <= p < len(self.query):
+            return "\x00"
+        return self.query[p]
 
     @staticmethod
     def is_latin(char: str):
@@ -88,9 +103,24 @@ class ExpEvalProcedure:
         return ord("0") <= ord(char) <= ord("9")
 
     def split_to_tokens(self):
-        """The most boring part (i hope)"""
+        """
+        The most boring part (i hope)
+        0 - word letter
+        1 - digit
+        2 - space
+        3 - operator symbol
+        4 - \x00
+        5 - other symbols
+        6 - innocent symbol -> error
+        """
         for p in range(len(self.query)):
-            ch: str = self.query[p]
+            ch = self.get_ch(p)
+            for i in range(len(self.checks)):
+                if self.checks[i](ch):
+                    self.char_map[p] = i
+                    break
+            else:
+                raise Exception("Innocent symbol %s at pos %d" % (ch, p + 1))
 
     def __call__(self):
         self.query += "\x00"
