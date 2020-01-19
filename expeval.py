@@ -77,7 +77,7 @@ class ExpEvalProcedure:
         self.config = config
         self.query = query
         # Tokenizer
-        self.char_map = [-1] * len(query)
+        self.char_types = [-1] * (len(self.query))
         self.checks = [
             self.is_latin,
             self.is_digit,
@@ -88,10 +88,19 @@ class ExpEvalProcedure:
         ]
         self.tokens = []
 
-    def get_ch(self, p) -> str:
+    def get_ch(self, p):
         if 0 <= p < len(self.query):
-            return "\x00"
-        return self.query[p]
+            ch = self.query[p]
+            if self.char_types[p] == -1:
+                for i in range(len(self.checks)):
+                    if self.checks[i](ch):
+                        self.char_types[p] = i
+                        break
+                else:
+                    raise Exception("Innocent symbol %s at pos %d" % (ch, p + 1))
+        else:
+            return "\x00", 4
+        return ch, self.char_types[p]
 
     @staticmethod
     def is_latin(char: str):
@@ -114,13 +123,7 @@ class ExpEvalProcedure:
         6 - innocent symbol -> error
         """
         for p in range(len(self.query)):
-            ch = self.get_ch(p)
-            for i in range(len(self.checks)):
-                if self.checks[i](ch):
-                    self.char_map[p] = i
-                    break
-            else:
-                raise Exception("Innocent symbol %s at pos %d" % (ch, p + 1))
+            ch, tp = self.get_ch(p)
 
     def __call__(self):
         self.query += "\x00"
