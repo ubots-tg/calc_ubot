@@ -12,12 +12,6 @@ std_names = {
         "level": 1,
         "sides": (1, 1),
         "func": addition
-    },
-    "__plus-minus__": {
-        "type:": "op",
-        "level": 1,
-        "sides": (1, 1),
-        "func": make_set_plus_minus
     }
 }
 
@@ -29,10 +23,6 @@ std_specific_operators = {
     "-": {
         "replace": "__addition__",
         "from_heaven": [-1]
-    },
-    "+-": {
-        "allow_shuffle": True,
-        "replace": "__plus-minus__"
     }
 }
 
@@ -51,14 +41,20 @@ class Token:
 class ExpEval:
     def __init__(self, names=None, specific_operators=None):
         if names is None:
-            self.names=std_names
+            self.names = std_names
         else:
             self.names = names
         if specific_operators is None:
-            self.specific_operators=std_specific_operators
+            self.specific_operators = std_specific_operators
         else:
             self.specific_operators = specific_operators
         self.pare_brackets = ["()", "{}"]
+
+        self.execution_levels = set()
+        for name in self.names:
+            if self.names[name]["type"] == "op":
+                self.execution_levels.add(self.names[name]["level"])
+        self.execution_levels = sorted(list(self.execution_levels), reverse=True)
 
     def comp_exp(self, query):
         return ExpEvalProcedure(self, query)()
@@ -68,8 +64,23 @@ class ExpEvalProcedure:
     def __init__(self, config: ExpEval, query):
         self.config = config
         self.query = query
+        self.tokens = []
 
-    def __call__(self):
+    @staticmethod
+    def is_latin(char: str):
+        char = ord(char.lower())
+        return ord("a") <= char <= ord("z")
+
+    @staticmethod
+    def is_digit(char: str):
+        return ord("0") <= ord(char) <= ord("9")
+
+    def split_to_tokens(self):
+        """The most boring part (i hope)"""
         for p in range(len(self.query)):
             ch = self.query[p]
+            pass
 
+    def __call__(self):
+        self.query += "\x00"
+        self.split_to_tokens()
