@@ -187,4 +187,5 @@ class Tokenizer:
                     self.tokens[-1].reversed = rev
 
     def __call__(self):
+        self.split_to_tokens()
         self.procedure.tokens = self.tokens
