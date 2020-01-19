@@ -84,16 +84,26 @@ class ExpEval:
 class ExpEvalProcedure:
     def __init__(self, config: ExpEval, query):
         self.config = config
+        self.query = query
+        self.tokenizer = Tokenizer(self, self.query)
+        self.tokens: List[Token] = []
+
+    def __call__(self):
+        self.tokenizer()
+
+
+class Tokenizer:
+    def __init__(self, procedure: ExpEvalProcedure, query):
+        self.procedure = procedure
         self.query = query + "\x00"
-        # Tokenizer
         self.char_types = [-1] * (len(self.query))
         self.checks = [
             self.is_latin,
             self.is_digit,
             lambda ch: ch.isspace(),
-            lambda ch: ch in self.config.operator_symbols,
+            lambda ch: ch in self.procedure.config.operator_symbols,
             lambda ch: ch == "\x00",
-            lambda ch: ch in self.config.other_symbols
+            lambda ch: ch in self.procedure.config.other_symbols
         ]
         self.tokens: List[Token] = []
 
@@ -124,14 +134,14 @@ class ExpEvalProcedure:
         rev = False
         for i in range(len(operator)):
             ch = operator[i]
-            if ch in self.config.pares:
+            if ch in self.procedure.config.pares:
                 rev = True
-                operator[i] = self.config.pares[ch]
+                operator[i] = self.procedure.config.pares[ch]
         return sorted(operator), rev
 
     def is_finished_operator(self, my_op):
         simple_my_op, rev = self.simplify_the_operator(my_op)
-        for op in self.config.specific_operators:
+        for op in self.procedure.config.specific_operators:
             if self.simplify_the_operator(op)[0] == simple_my_op:
                 return simple_my_op, rev
         return False, False
@@ -177,4 +187,4 @@ class ExpEvalProcedure:
                     self.tokens[-1].reversed = rev
 
     def __call__(self):
-        self.split_to_tokens()
+        self.procedure.tokens = self.tokens
