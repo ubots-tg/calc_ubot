@@ -20,11 +20,13 @@ std_names = {
 std_specific_operators = {
     "+": {
         "replace": "__addition__",
-        "from_heaven": [1]
+        "from_heaven": [1],
+        "branching": True
     },
     "-": {
         "replace": "__addition__",
-        "from_heaven": [-1]
+        "from_heaven": [-1],
+        "branching": True
     }
 }
 
@@ -170,6 +172,7 @@ class ExpEvalProcedure:
             if tp1 == 3:
                 simple_op, rev = self.is_finished_operator(self.tokens[-1].token)
                 if simple_op:
+                    self.tokens[-1].token = simple_op
                     self.tokens[-1].finished = True
                     self.tokens[-1].reversed = rev
 
