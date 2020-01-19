@@ -1,3 +1,4 @@
+import threading
 import math
 from expeval_funcs import *
 
@@ -65,7 +66,10 @@ class ExpEval:
                 self.specific_chars.add(ch)
 
     def comp_exp(self, query):
-        return ExpEvalProcedure(self, query)()
+        try:
+            return ExpEvalProcedure(self, query)()
+        except Exception as err:
+            return err, False
 
 
 class ExpEvalProcedure:
