@@ -1,3 +1,4 @@
+from typing import List, Tuple
 import threading
 import math
 from expeval_funcs import *
@@ -37,6 +38,7 @@ class Token:
         self.token = token
         self.word = word
         self.val = val
+        self.finished = False
 
 
 class ExpEval:
@@ -51,6 +53,7 @@ class ExpEval:
         else:
             self.specific_operators = specific_operators
         self.other_symbols = list("(){},;")  # They all 1 char length
+        self.pares = {"\\": "/", "<": ">"}
 
         # execution levels)))
         self.execution_levels = set()
@@ -61,7 +64,7 @@ class ExpEval:
 
         # operator_symbols
         self.operator_symbols = set()
-        for name in self.specific_operators:
+        for name in list(self.specific_operators.keys()) + list(self.pares.keys()):
             for ch in name:
                 self.operator_symbols.add(ch)
 
@@ -86,9 +89,9 @@ class ExpEvalProcedure:
             lambda ch: ch == "\x00",
             lambda ch: ch in self.config.other_symbols
         ]
-        self.tokens = []
+        self.tokens: List[Token] = []
 
-    def get_ch(self, p):
+    def get_ch(self, p) -> Tuple[str, int]:
         if 0 <= p < len(self.query):
             ch = self.query[p]
             if self.char_types[p] == -1:
@@ -111,6 +114,16 @@ class ExpEvalProcedure:
     def is_digit(char: str):
         return ord("0") <= ord(char) <= ord("9")
 
+    def simplify_the_operator(self, operator):
+        for i in range(len(operator)):
+            ch = operator[i]
+            if ch in self.config.pares:
+                operator[i] = self.config.pares[ch]
+        return sorted(operator)
+
+    def is_finished_operator(self, sy_op):
+        for self.config.specific_operators:
+
     def split_to_tokens(self):
         """
         The most boring part (i hope)
@@ -123,7 +136,23 @@ class ExpEvalProcedure:
         6 - innocent symbol -> error
         """
         for p in range(len(self.query)):
-            ch, tp = self.get_ch(p)
+            ch1, tp1 = self.get_ch(p)
+            ch2, tp2 = self.get_ch(p - 1)
+            if tp1 == 5:
+                self.tokens.append(Token(ch1))
+                continue
+            if tp1 in (2, 4):
+                continue
+            if tp1 == tp2:
+                self.tokens[-1].token += ch1
+            else:
+                self.tokens.append(Token(ch1))
+                if tp1 == 0:
+                    self.tokens[-1].word = True
+                if tp1 == 1:
+                    self.tokens[-1].val = True
+            if tp1 == 3:
+                pass
 
     def __call__(self):
         self.query += "\x00"
