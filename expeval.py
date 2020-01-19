@@ -53,7 +53,7 @@ class ExpEval:
         else:
             self.specific_operators = specific_operators
         self.other_symbols = list("(){},;")  # They all 1 char length
-        self.pares = {"\\": "/", "<": ">"}
+        self.pares = {"<": ">"}
 
         # execution levels)))
         self.execution_levels = set()
