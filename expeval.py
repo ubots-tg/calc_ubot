@@ -40,6 +40,7 @@ class Token:
 
 class ExpEval:
     def __init__(self, names=None, specific_operators=None):
+        # пффффф
         if names is None:
             self.names = std_names
         else:
@@ -50,11 +51,18 @@ class ExpEval:
             self.specific_operators = specific_operators
         self.pare_brackets = ["()", "{}"]
 
+        # execution levels)))
         self.execution_levels = set()
         for name in self.names:
             if self.names[name]["type"] == "op":
                 self.execution_levels.add(self.names[name]["level"])
         self.execution_levels = sorted(list(self.execution_levels), reverse=True)
+
+        # specific_symbols
+        self.specific_chars = set()
+        for name in self.specific_operators:
+            for ch in name:
+                self.specific_chars.add(ch)
 
     def comp_exp(self, query):
         return ExpEvalProcedure(self, query)()
@@ -78,8 +86,7 @@ class ExpEvalProcedure:
     def split_to_tokens(self):
         """The most boring part (i hope)"""
         for p in range(len(self.query)):
-            ch = self.query[p]
-            pass
+            ch: str = self.query[p]
 
     def __call__(self):
         self.query += "\x00"
