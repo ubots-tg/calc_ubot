@@ -82,7 +82,7 @@ class ExpEval:
 class ExpEvalProcedure:
     def __init__(self, config: ExpEval, query):
         self.config = config
-        self.query = query
+        self.query = query + "\x00"
         # Tokenizer
         self.char_types = [-1] * (len(self.query))
         self.checks = [
@@ -174,5 +174,4 @@ class ExpEvalProcedure:
                     self.tokens[-1].reversed = rev
 
     def __call__(self):
-        self.query += "\x00"
         self.split_to_tokens()
