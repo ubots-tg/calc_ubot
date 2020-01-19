@@ -34,11 +34,15 @@ class ExecutionPoint:
 
 
 class Token:
-    def __init__(self, token, word=False, val=False):
+    def __init__(self, token, word=False, val=False, op=False):
+        """Crutch"""
         self.token = token
         self.word = word
         self.val = val
+        # Operators stuff
+        self.op = op
         self.finished = False
+        self.reversed = False
 
 
 class ExpEval:
@@ -115,14 +119,20 @@ class ExpEvalProcedure:
         return ord("0") <= ord(char) <= ord("9")
 
     def simplify_the_operator(self, operator):
+        rev = False
         for i in range(len(operator)):
             ch = operator[i]
             if ch in self.config.pares:
+                rev = True
                 operator[i] = self.config.pares[ch]
-        return sorted(operator)
+        return sorted(operator), rev
 
-    def is_finished_operator(self, sy_op):
-        for self.config.specific_operators:
+    def is_finished_operator(self, my_op):
+        simple_my_op, rev = self.simplify_the_operator(my_op)
+        for op in self.config.specific_operators:
+            if self.simplify_the_operator(op)[0] == simple_my_op:
+                return simple_my_op, rev
+        return False, False
 
     def split_to_tokens(self):
         """
@@ -144,15 +154,24 @@ class ExpEvalProcedure:
             if tp1 in (2, 4):
                 continue
             if tp1 == tp2:
-                self.tokens[-1].token += ch1
+                if tp1 == 3:
+                    if not self.tokens[-1].finished:
+                        self.tokens[-1].token += ch1
+                else:
+                    self.tokens[-1].token += ch1
             else:
                 self.tokens.append(Token(ch1))
                 if tp1 == 0:
                     self.tokens[-1].word = True
                 if tp1 == 1:
                     self.tokens[-1].val = True
+                if tp1 == 3:
+                    self.tokens[-1].op = True
             if tp1 == 3:
-                pass
+                simple_op, rev = self.is_finished_operator(self.tokens[-1].token)
+                if simple_op:
+                    self.tokens[-1].finished = True
+                    self.tokens[-1].reversed = rev
 
     def __call__(self):
         self.query += "\x00"
