@@ -58,7 +58,7 @@ class ExpEval:
             self.specific_operators = std_specific_operators
         else:
             self.specific_operators = specific_operators
-        self.other_symbols = list("(){},;")  # They all 1 char length
+        self.other_symbols = list("(){},;.")  # They all 1 char length
         self.pares = {"<": ">"}
 
         # execution levels)))
