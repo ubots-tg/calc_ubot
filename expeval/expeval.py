@@ -25,6 +25,7 @@ std_specific_operators = {
     },
     "-": {
         "replace": "__addition__",
+        "allow_shuffle": False,
         "from_heaven": [-1],
         "branching": True
     }

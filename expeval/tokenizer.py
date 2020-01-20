@@ -66,7 +66,7 @@ class Tokenizer:
         if not faze_one:
             return "", False
         for op in self.procedure.config.specific_operators:
-            if op["allow_shuffle"]:
+            if self.procedure.config.specific_operators[op]["allow_shuffle"]:
                 if self.simplify_single_operator(op)[2] == faze_two:
                     return faze_one, rev
             else:
@@ -74,12 +74,19 @@ class Tokenizer:
                     return faze_one, rev
         return "", False
 
-    def is_finished_operator(self, my_op):
-        simple_my_op, rev = self.simplify_single_operator(my_op)
-        for op in self.procedure.config.specific_operators:
-            if self.simplify_single_operator(op)[0] == simple_my_op:
-                return simple_my_op, rev
-        return False, False
+    def is_finished_operator(self, my_op) -> List[Tuple[str, bool]]:
+        res = []
+        while my_op != "":
+            for pref_len in range(self.procedure.config.mx_op_size, 0, -1):
+                prefix = my_op[:pref_len]
+                simp, rev = self.is_finished_single_operator(prefix)
+                if simp:
+                    res.append((simp, rev))
+                    my_op = my_op[pref_len:]
+                    break
+            else:
+                return []
+        return res
 
     def split_to_tokens(self):
         """
@@ -122,9 +129,9 @@ class Tokenizer:
                 while all_chars != "":
                     for pref_len in range(len(all_chars), 0, -1):
                         prefix = all_chars[:pref_len]
-                        simp, rev = self.is_finished_operator(prefix)
-                        if simp:
-                            self.tokens.insert(i, Token(prefix, op=True))
+                        branches = self.is_finished_operator(prefix)
+                        if branches:
+                            self.tokens.insert(i, Token(branches, op=True))
                             i += 1
                             all_chars = all_chars[pref_len:]
                             break
