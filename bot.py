@@ -8,7 +8,7 @@ from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHan
 
 from secure import BOT_TOKEN
 
-from expeval import ExpEval
+from expeval.expeval import ExpEval
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
