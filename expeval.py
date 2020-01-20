@@ -36,7 +36,7 @@ class ExecutionPoint:
 
 
 class Token:
-    def __init__(self, token, st, word=False, val=False, op=False):
+    def __init__(self, token, st=-1, word=False, val=False, op=False):
         """Crutch"""
         self.token = token
         self.st = st
@@ -180,21 +180,24 @@ class Tokenizer:
 
     # TODO: Нет, серьёзно, это тест на дауна: найти здесь 69 багов за секунду на изи
     def fix_tokens(self):
-        for i in range(len(self.tokens)):
+        i = 0
+        while i < len(self.tokens):
             token = self.tokens[i]
             if token.op:
                 self.tokens.pop(i)
                 all_chars = token.token
                 while all_chars != "":
                     for pref_len in range(self.procedure.config.mx_op_size, 0, -1):
-                        # if pref_len > len(all_chars):
-                        #     raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
                         prefix = all_chars[:pref_len]
                         simp, rev = self.is_finished_operator(prefix)
                         if simp:
                             self.tokens.insert(i, Token(prefix, op=True))
                             i += 1
                             all_chars = all_chars[pref_len:]
+                            break
+                    else:
+                        raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
+            i += 1
 
     def __call__(self):
         self.split_to_tokens()
