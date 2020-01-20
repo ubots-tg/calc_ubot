@@ -36,15 +36,14 @@ class ExecutionPoint:
 
 
 class Token:
-    def __init__(self, token, word=False, val=False, op=False):
+    def __init__(self, token, st, word=False, val=False, op=False):
         """Crutch"""
         self.token = token
+        self.st = st
         self.word = word
         self.val = val
-        # Operators stuff
         self.op = op
-        self.finished = False
-        self.reversed = False
+        self.rev = False
 
 
 class ExpEval:
@@ -73,6 +72,9 @@ class ExpEval:
         for name in list(self.specific_operators.keys()) + list(self.pares.keys()):
             for ch in name:
                 self.operator_symbols.add(ch)
+
+        # max operator size
+        self.mx_op_size = max(map(lambda n: len(n), self.specific_operators.keys()))
 
     def comp_exp(self, query):
         try:
@@ -161,31 +163,40 @@ class Tokenizer:
             ch1, tp1 = self.get_ch(p)
             ch2, tp2 = self.get_ch(p - 1)
             if tp1 == 5:
-                self.tokens.append(Token(ch1))
+                self.tokens.append(Token(ch1, p))
                 continue
             if tp1 in (2, 4):
                 continue
             if tp1 == tp2:
-                if tp1 == 3:
-                    if not self.tokens[-1].finished:
-                        self.tokens[-1].token += ch1
-                else:
-                    self.tokens[-1].token += ch1
+                self.tokens[-1].token += ch1
             else:
-                self.tokens.append(Token(ch1))
+                self.tokens.append(Token(ch1, p))
                 if tp1 == 0:
                     self.tokens[-1].word = True
                 if tp1 == 1:
                     self.tokens[-1].val = True
                 if tp1 == 3:
                     self.tokens[-1].op = True
-            if tp1 == 3:
-                simple_op, rev = self.is_finished_operator(self.tokens[-1].token)
-                if simple_op:
-                    self.tokens[-1].token = simple_op
-                    self.tokens[-1].finished = True
-                    self.tokens[-1].reversed = rev
+
+    # TODO: Нет, серьёзно, это тест на дауна: найти здесь 69 багов за секунду на изи
+    def fix_tokens(self):
+        for i in range(len(self.tokens)):
+            token = self.tokens[i]
+            if token.op:
+                self.tokens.pop(i)
+                all_chars = token.token
+                while all_chars != "":
+                    for pref_len in range(self.procedure.config.mx_op_size, 0, -1):
+                        # if pref_len > len(all_chars):
+                        #     raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
+                        prefix = all_chars[:pref_len]
+                        simp, rev = self.is_finished_operator(prefix)
+                        if simp:
+                            self.tokens.insert(i, Token(prefix, op=True))
+                            i += 1
+                            all_chars = all_chars[pref_len:]
 
     def __call__(self):
         self.split_to_tokens()
+        self.fix_tokens()
         self.procedure.tokens = self.tokens
