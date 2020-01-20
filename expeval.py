@@ -1,5 +1,4 @@
 from typing import List, Tuple
-import threading
 import math
 from expeval_funcs import *
 
@@ -31,10 +30,6 @@ std_specific_operators = {
 }
 
 
-class ExecutionPoint:
-    pass
-
-
 class Token:
     def __init__(self, token, st=-1, word=False, val=False, op=False):
         """Crutch"""
@@ -57,7 +52,7 @@ class ExpEval:
             self.specific_operators = std_specific_operators
         else:
             self.specific_operators = specific_operators
-        self.other_symbols = list("(){},;.")  # They all 1 char length
+        self.other_symbols = list("()[]{},;.")  # They all 1 char length
         self.pares = {"<": ">"}
 
         # execution levels)))
@@ -178,8 +173,8 @@ class Tokenizer:
                 if tp1 == 3:
                     self.tokens[-1].op = True
 
-    # TODO: Нет, серьёзно, это тест на дауна: найти здесь 69 багов за секунду на изи
     def fix_tokens(self):
+        # Fix operator symbols
         i = 0
         while i < len(self.tokens):
             token = self.tokens[i]
@@ -197,6 +192,26 @@ class Tokenizer:
                             break
                     else:
                         raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
+            i += 1
+        # Fix points
+        # TODO: remove crutches
+        i = 0
+        while i < len(self.tokens):
+            token = self.tokens[i]
+            if token.token == ".":
+                length = 1
+                res = [""] * 2
+                mn = i
+                for j in range(1, -1, -1):
+                    k = j * 2 - 1
+                    if 0 <= i + k < len(self.tokens) and self.tokens[i + k].val:
+                        res[j] = self.tokens[i + k].token
+                        mn = i + k
+                        length += 1
+                if res != [""] * 2:
+                    for j in range(length):
+                        self.tokens.pop(mn)
+                    self.tokens.insert(mn, Token(".".join(res), val=True))
             i += 1
 
     def __call__(self):
