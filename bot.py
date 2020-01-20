@@ -50,7 +50,7 @@ def dm_query(update: Update, context: CallbackContext):
     if success:
         update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
     else:
-        update.message.reply_text('Error')
+        update.message.reply_text(f'<b>Error:</b> {result}', parse_mode='HTML')
 
 
 def error(update: Update, context: CallbackContext):
