@@ -40,19 +40,44 @@ class Tokenizer:
     def is_digit(char: str):
         return ord("0") <= ord(char) <= ord("9")
 
-    def simplify_the_operator(self, operator):
+    def decide_operator_orientation(self, _operator: str) -> Tuple[str, bool]:
+        op = list(_operator)
         rev = False
-        for i in range(len(operator)):
-            ch = operator[i]
+        rev_decided = False
+        for i in range(len(op)):
+            ch = op[i]
             if ch in self.procedure.config.pares:
-                rev = True
-                operator[i] = self.procedure.config.pares[ch]
-        return sorted(operator), rev
+                if rev_decided and not rev:
+                    return "", False  # Failure
+                rev, rev_decided = True, True
+                op[i] = self.procedure.config.pares[ch]
+            elif ch in self.procedure.config.pares.values():
+                if rev_decided and rev:
+                    return "", False
+                rev, rev_decided = False, True
+        return "".join(op), rev
+
+    def simplify_single_operator(self, operator: str) -> Tuple[str, bool, str]:
+        no_rev_operator, rev = self.decide_operator_orientation(operator)
+        return no_rev_operator, rev, "".join(sorted(no_rev_operator))
+
+    def is_finished_single_operator(self, my_op) -> Tuple[str, bool]:
+        faze_one, rev, faze_two = self.simplify_single_operator(my_op)
+        if not faze_one:
+            return "", False
+        for op in self.procedure.config.specific_operators:
+            if op["allow_shuffle"]:
+                if self.simplify_single_operator(op)[2] == faze_two:
+                    return faze_one, rev
+            else:
+                if op == faze_one:
+                    return faze_one, rev
+        return "", False
 
     def is_finished_operator(self, my_op):
-        simple_my_op, rev = self.simplify_the_operator(my_op)
+        simple_my_op, rev = self.simplify_single_operator(my_op)
         for op in self.procedure.config.specific_operators:
-            if self.simplify_the_operator(op)[0] == simple_my_op:
+            if self.simplify_single_operator(op)[0] == simple_my_op:
                 return simple_my_op, rev
         return False, False
 
@@ -95,7 +120,7 @@ class Tokenizer:
                 self.tokens.pop(i)
                 all_chars = token.token
                 while all_chars != "":
-                    for pref_len in range(self.procedure.config.mx_op_size, 0, -1):
+                    for pref_len in range(len(all_chars), 0, -1):
                         prefix = all_chars[:pref_len]
                         simp, rev = self.is_finished_operator(prefix)
                         if simp:

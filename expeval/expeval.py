@@ -19,6 +19,7 @@ std_names = {
 std_specific_operators = {
     "+": {
         "replace": "__addition__",
+        "allow_shuffle": False,  # Bad example
         "from_heaven": [1],
         "branching": True
     },
@@ -30,9 +31,13 @@ std_specific_operators = {
 }
 
 
+# TODO: add classes like WordToken, OperatorToken etc...
 class Token:
     def __init__(self, token, st=-1, word=False, val=False, op=False):
-        """Crutch"""
+        """
+        Crutch
+        -1 means that it doesn't mater
+        """
         self.token = token
         self.st = st
         self.word = word
