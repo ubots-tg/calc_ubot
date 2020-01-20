@@ -108,7 +108,6 @@ class Tokenizer:
             i += 1
         # Fix points
         # TODO: remove crutches
-        # TODO: .8+(4.6-6.5)-.8
         i = 0
         while i < len(self.tokens):
             token = self.tokens[i]
@@ -116,11 +115,11 @@ class Tokenizer:
                 length = 1
                 res = [""] * 2
                 mn = i
-                for j in range(1, -1, -1):
+                for j in range(2):
                     k = j * 2 - 1
                     if 0 <= i + k < len(self.tokens) and self.tokens[i + k].val:
                         res[j] = self.tokens[i + k].token
-                        mn = i + k
+                        mn = min(mn, i + k)
                         length += 1
                 if res != [""] * 2:
                     for j in range(length):
