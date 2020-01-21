@@ -8,20 +8,25 @@ std_names = {
         "type": "int",
         "val": math.pi
     },
-    "cnpk": {
-        "type": "func",
-        "call": "cnpk"
+    "comb": {
+        "type": "namespace",
+        "cont": {
+            "comb_c": {
+                "type": "func",
+                "calc": cnpk
+            }
+        }
     },
     "__addition__": {
         "type": "op",
         "level": 1,
-        "sides": (1, 1),
+        "sides": (True, 0, True),
         "func": lambda a, b, c: a + b * c
     },
     "__fact__": {
         "type": "op",
         "level": 3,
-        "sides": (1, 0),
+        "sides": (True, 0, False),
         "func": math.factorial
     }
 }
@@ -108,8 +113,10 @@ class ExpEvalProcedure:
     def __call__(self):
         tokenizer = Tokenizer(self, self.query)
         tokens = tokenizer()
-        executor = Executor(self, tokens)
-        return executor()
+        for tok in tokens:
+            print(tok.token)
+        # executor = Executor(self, tokens)
+        # return executor()
 
 
 from expeval.tokenizer import Tokenizer

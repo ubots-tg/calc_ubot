@@ -122,8 +122,8 @@ class Tokenizer:
 
     def __call__(self):
         self.split_to_tokens()
-        tokenizer_fixer = TokenizerFixer(self, self.tokens)
-        tokenizer_fixer()
+        tokenizer_fixer = TokenizerFixer(self)
+        self.tokens = tokenizer_fixer()
         return self.tokens
 
 

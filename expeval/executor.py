@@ -11,19 +11,14 @@ from expeval.expeval import ExpEvalProcedure, Token
 #         return self.a / self.b
 
 
-class InBrackets:
-    def __init__(self, config):
-        self.open, self.sep, self.close = config
-
-
-
+# class InBrackets:
+#     def __init__(self, config):
+#         self.open, self.sep, self.close = config
 
 class Executor:
     def __init__(self, procedure: ExpEvalProcedure, tokens: List[Token]):
         self.procedure = procedure
         self.tokens = tokens.copy()
-
-    def execute_token_sequence(self):
 
     def simplify_br_set_func(self, left):
         """brackets -> sets -> functions"""
@@ -37,11 +32,9 @@ class Executor:
                     pass
             right += 1
 
-
     def __call__(self):
         self.tokens.insert(0, Token("("))
         self.tokens.append(Token(")"))
-        self.execute_token_sequence_inside_brackets(0)
         # TODO: сделать что-то
         return self.tokens[0], ""
 

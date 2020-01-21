@@ -4,9 +4,9 @@ from expeval.tokenizer import Tokenizer
 
 
 class TokenizerFixer:
-    def __init__(self, tokenizer: Tokenizer, tokens: List[Token]):
+    def __init__(self, tokenizer: Tokenizer):
         self.tokenizer = tokenizer
-        self.tokens = tokens
+        self.tokens: List[Token] = tokenizer.tokens
         self.i = 0
 
     def fix_stuck_operator(self):
@@ -26,8 +26,8 @@ class TokenizerFixer:
                 else:
                     raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
 
+    # TODO: tt.gg(56.7-(3.+.12))!-(56-.7)
     def fix_dot_token(self):
-        token = self.tokens[self.i]
         length = 1
         res = [""] * 2
         mn = self.i
@@ -45,7 +45,8 @@ class TokenizerFixer:
     def __call__(self,):
         while self.i < len(self.tokens):
             if self.tokens[self.i].op:
-                self.fix_dot_token()
-            elif self.tokens[self.i].token == ".":
                 self.fix_stuck_operator()
+            elif self.tokens[self.i].token == ".":
+                self.fix_dot_token()
             self.i += 1
+        return self.tokens
