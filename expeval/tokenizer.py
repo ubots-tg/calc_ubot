@@ -66,23 +66,28 @@ class Tokenizer:
         if not faze_one:
             return "", False
         for op in self.procedure.config.specific_operators:
-            if (self.procedure.config.specific_operators[op]["allow_shuffle"] and \
+            if (self.procedure.config.specific_operators[op]["allow_shuffle"] and\
                     self.simplify_single_operator(op)[2] == faze_two) or op == faze_one:
                 return op, rev
         return "", False
 
     def is_finished_operator(self, my_op) -> List[Tuple[str, bool]]:
         res = []
+        has_no_branching = False
         while my_op != "":
             for pref_len in range(self.procedure.config.mx_op_size, 0, -1):
                 prefix = my_op[:pref_len]
-                simp, rev = self.is_finished_single_operator(prefix)
-                if simp:
-                    res.append((simp, rev))
+                op, rev = self.is_finished_single_operator(prefix)
+                if op:
+                    res.append((op, rev))
+                    if not self.procedure.config.specific_operators[op]["branching"]:
+                        has_no_branching = True
                     my_op = my_op[pref_len:]
                     break
             else:
                 return []
+        if has_no_branching and len(res) > 1:
+            return []
         return res
 
     def split_to_tokens(self):

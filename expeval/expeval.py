@@ -13,6 +13,12 @@ std_names = {
         "level": 1,
         "sides": (1, 1),
         "func": addition
+    },
+    "__fact__": {
+        "type": "op",
+        "level": 3,
+        "sides": (1, 0),
+        "func": math.factorial
     }
 }
 
@@ -28,6 +34,12 @@ std_specific_operators = {
         "allow_shuffle": False,
         "from_heaven": [-1],
         "branching": True
+    },
+    "!": {
+        "replace": "__fact__",
+        "allow_shuffle": False,
+        "from_heaven": [],
+        "branching": False
     }
 }
 
