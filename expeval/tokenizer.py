@@ -120,8 +120,7 @@ class Tokenizer:
                 if tp1 == 3:
                     self.tokens[-1].op = True
 
-    def fix_tokens(self):
-        # Fix operator symbols
+    def fix_stuck_operator(self):
         i = 0
         while i < len(self.tokens):
             token = self.tokens[i]
@@ -140,7 +139,8 @@ class Tokenizer:
                     else:
                         raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
             i += 1
-        # Fix points
+
+    def fix_dots_tokens(self):
         # TODO: remove crutches
         i = 0
         while i < len(self.tokens):
@@ -163,5 +163,6 @@ class Tokenizer:
 
     def __call__(self):
         self.split_to_tokens()
-        self.fix_tokens()
+        self.fix_stuck_operator()
+        self.fix_dots_tokens()
         self.procedure.tokens = self.tokens
