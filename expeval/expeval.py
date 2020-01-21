@@ -1,6 +1,6 @@
 from typing import List, Tuple
 import math
-from expeval.expeval_funcs import *
+from expeval.expeval_funcs import cnpk
 
 # TODO: optimize this bullshit
 std_names = {
@@ -8,11 +8,15 @@ std_names = {
         "type": "int",
         "val": math.pi
     },
+    "cnpk": {
+        "type": "func",
+        "call": "cnpk"
+    },
     "__addition__": {
         "type": "op",
         "level": 1,
         "sides": (1, 1),
-        "func": addition
+        "func": lambda a, b, c: a + b * c
     },
     "__fact__": {
         "type": "op",
@@ -100,13 +104,12 @@ class ExpEvalProcedure:
     def __init__(self, config: ExpEval, query):
         self.config = config
         self.query = query
-        self.tokenizer = Tokenizer(self, self.query)
-        self.tokens: List[Token] = []
-        self.executor = Executor(self, self.tokens)
 
     def __call__(self):
-        self.tokenizer()
-        return self.executor()
+        tokenizer = Tokenizer(self, self.query)
+        tokens = tokenizer()
+        executor = Executor(self, tokens)
+        return executor()
 
 
 from expeval.tokenizer import Tokenizer

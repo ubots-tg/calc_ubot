@@ -120,49 +120,11 @@ class Tokenizer:
                 if tp1 == 3:
                     self.tokens[-1].op = True
 
-    def fix_stuck_operator(self):
-        i = 0
-        while i < len(self.tokens):
-            token = self.tokens[i]
-            if token.op:
-                self.tokens.pop(i)
-                all_chars = token.token
-                while all_chars != "":
-                    for pref_len in range(len(all_chars), 0, -1):
-                        prefix = all_chars[:pref_len]
-                        branches = self.is_finished_operator(prefix)
-                        if branches:
-                            self.tokens.insert(i, Token(branches, op=True))
-                            i += 1
-                            all_chars = all_chars[pref_len:]
-                            break
-                    else:
-                        raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
-            i += 1
-
-    def fix_dots_tokens(self):
-        # TODO: remove crutches
-        i = 0
-        while i < len(self.tokens):
-            token = self.tokens[i]
-            if token.token == ".":
-                length = 1
-                res = [""] * 2
-                mn = i
-                for j in range(2):
-                    k = j * 2 - 1
-                    if 0 <= i + k < len(self.tokens) and self.tokens[i + k].val:
-                        res[j] = self.tokens[i + k].token
-                        mn = min(mn, i + k)
-                        length += 1
-                if res != [""] * 2:
-                    for j in range(length):
-                        self.tokens.pop(mn)
-                    self.tokens.insert(mn, Token(".".join(res), val=True))
-            i += 1
-
     def __call__(self):
         self.split_to_tokens()
-        self.fix_stuck_operator()
-        self.fix_dots_tokens()
-        self.procedure.tokens = self.tokens
+        tokenizer_fixer = TokenizerFixer(self, self.tokens)
+        tokenizer_fixer()
+        return self.tokens
+
+
+from expeval.tokenizer_fixer import TokenizerFixer

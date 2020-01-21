@@ -2,13 +2,41 @@ from typing import List
 from expeval.expeval import ExpEvalProcedure, Token
 
 
+# class UbotRatioInt:
+#     def __init__(self, a, b):
+#         self.a = a
+#         self.b = b
+#
+#     def __float__(self):
+#         return self.a / self.b
+
+
+class InBrackets:
+    def __init__(self, config):
+        self.open, self.sep, self.close = config
+
+
+
+
 class Executor:
     def __init__(self, procedure: ExpEvalProcedure, tokens: List[Token]):
         self.procedure = procedure
-        self.tokens = tokens
+        self.tokens = tokens.copy()
 
-    def execute_token_sequence_inside_brackets(self, left):
-        pass
+    def execute_token_sequence(self):
+
+    def simplify_br_set_func(self, left):
+        """brackets -> sets -> functions"""
+        right = left + 1
+        while True:
+            token = self.tokens[right]
+            if isinstance(token, Token):
+                if token.token == "(":
+                    pass
+                elif token.token == ")":
+                    pass
+            right += 1
+
 
     def __call__(self):
         self.tokens.insert(0, Token("("))
@@ -16,3 +44,6 @@ class Executor:
         self.execute_token_sequence_inside_brackets(0)
         # TODO: сделать что-то
         return self.tokens[0], ""
+
+
+from expeval.expeval_funcs import exgcd
