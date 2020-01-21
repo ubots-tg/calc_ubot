@@ -66,12 +66,9 @@ class Tokenizer:
         if not faze_one:
             return "", False
         for op in self.procedure.config.specific_operators:
-            if self.procedure.config.specific_operators[op]["allow_shuffle"]:
-                if self.simplify_single_operator(op)[2] == faze_two:
-                    return faze_one, rev
-            else:
-                if op == faze_one:
-                    return faze_one, rev
+            if (self.procedure.config.specific_operators[op]["allow_shuffle"] and \
+                    self.simplify_single_operator(op)[2] == faze_two) or op == faze_one:
+                return op, rev
         return "", False
 
     def is_finished_operator(self, my_op) -> List[Tuple[str, bool]]:
