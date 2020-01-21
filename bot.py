@@ -30,7 +30,7 @@ def start(update: Update, context: CallbackContext):
 def inline_query(update: Update, context: CallbackContext):
     global expr_evaluator
     query = update.inline_query.query
-    result, success = expr_evaluator.comp_exp
+    result, pretty_result, success = expr_evaluator.comp_exp(query)
     query_results = []
     if success:
         query_results.append(
@@ -46,7 +46,7 @@ def inline_query(update: Update, context: CallbackContext):
 def dm_query(update: Update, context: CallbackContext):
     global expr_evaluator
     query = update.message.text
-    result, success = expr_evaluator.comp_exp
+    result, pretty_result, success = expr_evaluator.comp_exp(query)
     if success:
         update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
     else:

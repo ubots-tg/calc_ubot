@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 import math
 from expeval.expeval_funcs import *
 
@@ -73,7 +73,7 @@ class ExpEval:
         self.other_symbols = list("()[]{},;.")  # They all 1 char length
         self.pares = {"<": ">"}
 
-        # execution levels)))
+        # execution levels
         self.execution_levels = set()
         for name in self.names:
             if self.names[name]["type"] == "op":
@@ -89,11 +89,11 @@ class ExpEval:
         # max operator size
         self.mx_op_size = max(map(lambda n: len(n), self.specific_operators.keys()))
 
-    def comp_exp(self, query):
+    def comp_exp(self, query) -> Tuple[str, str, bool]:
         try:
             return ExpEvalProcedure(self, query)()
         except Exception as err:
-            return err, False
+            return str(err), "", False
 
 
 class ExpEvalProcedure:
@@ -102,9 +102,12 @@ class ExpEvalProcedure:
         self.query = query
         self.tokenizer = Tokenizer(self, self.query)
         self.tokens: List[Token] = []
+        self.executor = Executor(self, self.tokens)
 
     def __call__(self):
         self.tokenizer()
+        return self.executor()
 
 
 from expeval.tokenizer import Tokenizer
+from expeval.executor import Executor
