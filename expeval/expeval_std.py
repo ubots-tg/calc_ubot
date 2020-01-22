@@ -1,7 +1,5 @@
 import math
-
-
-__all__ = ["std_names", "std_specific_operators"]
+from typing import Tuple, Callable
 
 
 def cnpk(n, k):
@@ -19,7 +17,35 @@ def exgcd(a, b):
     return x, y - (a // b) * x, gcd
 
 
-# TODO: optimize this bullshit
+class CalcUbotName:
+    type: str
+
+    def __init__(self, **kwargs):
+        for k in kwargs:
+            setattr(self, k, kwargs[k])
+
+
+class CalcUbotVal(CalcUbotName):
+    val = None
+
+
+class Operator(CalcUbotName):
+    level: int
+    sides: Tuple[bool, bool, bool]
+    func: Callable
+
+
+class CharOperator(CalcUbotName):
+    replace: str
+    allow_shuffle: bool
+    from_heaven = None
+    branching: bool
+
+
+class Namespace(CalcUbotName):
+    cont: dict
+
+
 std_names = {
     "pi": {
         "type": "int",
@@ -30,7 +56,7 @@ std_names = {
         "cont": {
             "comb_c": {
                 "type": "func",
-                "calc": cnpk
+                "val": cnpk
             }
         }
     },
@@ -57,7 +83,7 @@ std_names = {
 std_specific_operators = {
     "+": {
         "replace": "__addition__",
-        "allow_shuffle": False,  # Bad example
+        "allow_shuffle": False,
         "from_heaven": [1],
         "branching": True
     },
