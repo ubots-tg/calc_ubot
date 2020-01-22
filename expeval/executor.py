@@ -12,7 +12,25 @@ class Executor:
         self.env = tokens.copy()
 
     def brackets(self, sti, bracket, belong_as_tuple):
+        p = sti
         end_bracket = self.procedure.config.brackets[bracket]
+        while True:
+            if isinstance(self.env[p], Token):
+                tk: Token = self.env[p]
+                if tk.token == end_bracket:
+                    eni = p
+                    break
+                elif tk.token in self.procedure.config.brackets:
+                    self.brackets(p, tk.token, False)
+                elif tk.token == ".":
+                    # At this place, point is using only to use "namespaces".
+                    path_word = []
+                    for j in (-1, 1):
+                        if sti < p + j < len(self.env) and self.env[p + j].word:
+                            path_word.append(self.env[p + j].token)
+                        else:
+                            raise Exception("Point that doesn't binds namespace and link at place % d" % tk.st)
+            p += 1
 
     # def simplify_br_set_func(self, left):
     #     """brackets -> sets -> functions"""
@@ -29,8 +47,5 @@ class Executor:
     def __call__(self):
         self.env.insert(0, Token("("))
         self.env.append(Token(")"))
-        # TODO: сделать что-то
+        self.brackets(0, "(", False)
         return self.env[0], ""
-
-
-from expeval.expeval_funcs import exgcd

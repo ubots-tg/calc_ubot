@@ -1,58 +1,8 @@
 from typing import List, Tuple
-import math
-from expeval.expeval_funcs import cnpk
-
-# TODO: optimize this bullshit
-std_names = {
-    "pi": {
-        "type": "int",
-        "val": math.pi
-    },
-    "comb": {
-        "type": "namespace",
-        "cont": {
-            "comb_c": {
-                "type": "func",
-                "calc": cnpk
-            }
-        }
-    },
-    "__addition__": {
-        "type": "op",
-        "level": 1,
-        "sides": (True, 0, True),
-        "func": lambda a, b, c: a + b * c
-    },
-    "__fact__": {
-        "type": "op",
-        "level": 3,
-        "sides": (True, 0, False),
-        "func": math.factorial
-    }
-}
-
-std_specific_operators = {
-    "+": {
-        "replace": "__addition__",
-        "allow_shuffle": False,  # Bad example
-        "from_heaven": [1],
-        "branching": True
-    },
-    "-": {
-        "replace": "__addition__",
-        "allow_shuffle": False,
-        "from_heaven": [-1],
-        "branching": True
-    },
-    "!": {
-        "replace": "__fact__",
-        "allow_shuffle": False,
-        "from_heaven": [],
-        "branching": False
-    }
-}
+from expeval.expeval_funcs import *
 
 
+# TODO: fix counting token place everywhere
 # TODO: add classes like WordToken, OperatorToken etc...
 class Token:
     def __init__(self, token, st=-1, word=False, val=False, op=False):
@@ -80,7 +30,7 @@ class ExpEval:
             self.specific_operators = specific_operators
         self.other_symbols = list("()[]{},;.")  # They all 1 char length
         self.pares = {"<": ">", "\\": "/"}
-        self.brackets = {"(": ")", "[": "]", "{": "}"}
+        self.brackets = {"(": "),", "[": "]", "{": "}"}
 
         # execution levels
         self.execution_levels = set()
