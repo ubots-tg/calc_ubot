@@ -13,7 +13,6 @@ class TokenizerFixer:
         token = self.tokens[self.i]
         self.tokens.pop(self.i)
         all_chars = token.token
-        print(all_chars)
         while all_chars != "":
             for pref_len in range(len(all_chars), 0, -1):
                 prefix = all_chars[:pref_len]
@@ -42,6 +41,7 @@ class TokenizerFixer:
             for j in range(length):
                 self.tokens.pop(mn)
             self.tokens.insert(mn, Token(".".join(res), val=True))
+            self.i = mn
 
     def __call__(self,):
         while self.i < len(self.tokens):
