@@ -11,20 +11,21 @@ class TokenizerFixer:
 
     def fix_stuck_operator(self):
         token = self.tokens[self.i]
-        if token.op:
-            self.tokens.pop(self.i)
-            all_chars = token.token
-            while all_chars != "":
-                for pref_len in range(len(all_chars), 0, -1):
-                    prefix = all_chars[:pref_len]
-                    branches = self.tokenizer.is_finished_operator(prefix)
-                    if branches:
-                        self.tokens.insert(self.i, Token(branches, op=True))
-                        self.i += 1
-                        all_chars = all_chars[pref_len:]
-                        break
-                else:
-                    raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
+        self.tokens.pop(self.i)
+        all_chars = token.token
+        print(all_chars)
+        while all_chars != "":
+            for pref_len in range(len(all_chars), 0, -1):
+                prefix = all_chars[:pref_len]
+                branches = self.tokenizer.is_finished_operator(prefix)
+                if branches:
+                    self.tokens.insert(self.i, Token(branches, op=True))
+                    self.i += 1
+                    all_chars = all_chars[pref_len:]
+                    break
+            else:
+                raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
+        self.i -= 1
 
     # TODO: tt.gg(56.7-(3.+.12))!-(56-.7)
     def fix_dot_token(self):

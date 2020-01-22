@@ -65,7 +65,6 @@ class Token:
         self.word = word
         self.val = val
         self.op = op
-        self.rev = False
 
 
 class ExpEval:
@@ -114,7 +113,7 @@ class ExpEvalProcedure:
         tokenizer = Tokenizer(self, self.query)
         tokens = tokenizer()
         for tok in tokens:
-            print(tok.token)
+            print(tok.token, tok.word, tok.val, tok.op)
         # executor = Executor(self, tokens)
         # return executor()
 
