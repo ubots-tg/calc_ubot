@@ -26,7 +26,6 @@ class TokenizerFixer:
                 raise Exception("Illegal char sequence, started at %d: %s" % (token.st + 1, token.token))
         self.i -= 1
 
-    # TODO: tt.gg(56.7-(3.+.12))!-(56-.7)
     def fix_dot_token(self):
         length = 1
         res = [""] * 2

@@ -79,7 +79,8 @@ class ExpEval:
         else:
             self.specific_operators = specific_operators
         self.other_symbols = list("()[]{},;.")  # They all 1 char length
-        self.pares = {"<": ">"}
+        self.pares = {"<": ">", "\\": "/"}
+        self.brackets = {"(": ")", "[": "]", "{": "}"}
 
         # execution levels
         self.execution_levels = set()
@@ -112,10 +113,8 @@ class ExpEvalProcedure:
     def __call__(self):
         tokenizer = Tokenizer(self, self.query)
         tokens = tokenizer()
-        for tok in tokens:
-            print(tok.token, tok.word, tok.val, tok.op)
-        # executor = Executor(self, tokens)
-        # return executor()
+        executor = Executor(self, tokens)
+        return executor()
 
 
 from expeval.tokenizer import Tokenizer
