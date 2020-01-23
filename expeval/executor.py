@@ -12,7 +12,7 @@ class Executor:
         self.env = tokens.copy()
 
     def brackets(self, sti, bracket, belong_as_tuple):
-        p = sti
+        p = sti + 1
         end_bracket = self.procedure.config.brackets[bracket]
         while True:
             if isinstance(self.env[p], Token):
@@ -31,18 +31,6 @@ class Executor:
                         else:
                             raise Exception("Point that doesn't binds namespace and link at place % d" % tk.st)
             p += 1
-
-    # def simplify_br_set_func(self, left):
-    #     """brackets -> sets -> functions"""
-    #     right = left + 1
-    #     while True:
-    #         token = self.env[right]
-    #         if isinstance(token, Token):
-    #             if token.token == "(":
-    #                 pass
-    #             elif token.token == ")":
-    #                 pass
-    #         right += 1
 
     def __call__(self):
         self.env.insert(0, Token("("))

@@ -41,6 +41,12 @@ class Namespace(CalcUbotName):
             return in_me
         return in_me.apply_path(sp_res[1])
 
+    def __iter__(self):
+        return self.cont.__iter__()
+
+    def __getitem__(self, item: str):
+        return self.apply_path(item)
+
 
 def cnpk(n, k):
     res = 1
