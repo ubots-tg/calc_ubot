@@ -66,7 +66,7 @@ class Tokenizer:
         if not faze_one:
             return "", False
         for op in self.procedure.config.specific_operators:
-            if (self.procedure.config.specific_operators[op]["allow_shuffle"] and\
+            if (self.procedure.config.specific_operators[op].allow_shuffle and\
                     self.simplify_single_operator(op)[2] == faze_two) or op == faze_one:
                 return op, rev
         return "", False
@@ -80,7 +80,7 @@ class Tokenizer:
                 op, rev = self.is_finished_single_operator(prefix)
                 if op:
                     res.append((op, rev))
-                    if not self.procedure.config.specific_operators[op]["branching"]:
+                    if not self.procedure.config.specific_operators[op].branching:
                         has_no_branching = True
                     my_op = my_op[pref_len:]
                     break

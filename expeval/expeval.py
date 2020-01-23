@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from expeval.expeval_std import std_names, std_specific_operators
+from expeval.expeval_std import std_names, std_specific_operators, CharOperator, Namespace
 
 
 # TODO: fix counting token place everywhere
@@ -18,6 +18,9 @@ class Token:
 
 
 class ExpEval:
+    names: Namespace
+    specific_operators: List[CharOperator]
+
     def __init__(self, names=None, specific_operators=None):
         # пффффф
         if names is None:

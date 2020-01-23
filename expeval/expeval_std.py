@@ -2,7 +2,6 @@ import math
 from typing import Tuple, Callable
 
 
-# TODO: optimize this bullshit (again)
 class CalcUbotName:
     type: str
 
