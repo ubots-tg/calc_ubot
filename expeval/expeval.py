@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Dict, Tuple
 from expeval.expeval_std import std_names, std_specific_operators, CharOperator, Namespace
 
 
@@ -19,7 +19,7 @@ class Token:
 
 class ExpEval:
     names: Namespace
-    specific_operators: List[CharOperator]
+    specific_operators: Dict[CharOperator]
 
     def __init__(self, names=None, specific_operators=None):
         # пффффф
@@ -38,13 +38,13 @@ class ExpEval:
         # execution levels
         self.execution_levels = set()
         for name in self.names:
-            if self.names[name]["type"] == "op":
-                self.execution_levels.add(self.names[name]["level"])
+            if self.names[name].type == "op":
+                self.execution_levels.add(self.names[name].level)
         self.execution_levels = sorted(list(self.execution_levels), reverse=True)
 
         # operator_symbols
         self.operator_symbols = set()
-        for name in list(self.specific_operators.keys()) + list(self.pares.keys()):
+        for name in list(self.specific_operators) + list(self.pares):
             for ch in name:
                 self.operator_symbols.add(ch)
 
