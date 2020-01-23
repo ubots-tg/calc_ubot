@@ -74,13 +74,11 @@ class Tokenizer:
     def are_satisfying_branches(self, branches):
         if len(branches) == 1:
             return branches
-        model = self.procedure.config.names.apply_path(
-            self.procedure.config.specific_operators[branches[0][0]].replace).sides
+        model = self.procedure.config.names[self.procedure.config.specific_operators[branches[0][0]].replace].sides
         for branch in branches:
             if not self.procedure.config.specific_operators[branch[0]].branching:
                 return []
-            if self.procedure.config.names.apply_path(
-                    self.procedure.config.specific_operators[branch[0]].replace).sides != model:
+            if self.procedure.config.names[self.procedure.config.specific_operators[branch[0]].replace].sides != model:
                 return []
         return branches
 

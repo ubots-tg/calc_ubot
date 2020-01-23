@@ -1,15 +1,12 @@
 from typing import List
 from expeval.expeval import ExpEvalProcedure, Token
+from expeval.expeval_std import Namespace
 
-
-# class InBrackets:
-#     def __init__(self, config):
-#         self.open, self.sep, self.close = config
 
 class Executor:
     def __init__(self, procedure: ExpEvalProcedure, tokens):
         self.procedure = procedure
-        self.env = tokens.copy()
+        self.env: List = tokens.copy()
 
     def brackets(self, sti, bracket, belong_as_tuple):
         p = sti + 1
@@ -22,14 +19,20 @@ class Executor:
                     break
                 elif tk.token in self.procedure.config.brackets:
                     self.brackets(p, tk.token, self.env[p - 1])
+                elif tk.word:
+                    from_root_val = self.procedure.config.names[self.env.pop(p).token]
+                    self.env.insert(p, from_root_val)
                 elif tk.token == ".":
                     # At this place, point is using only to use "namespaces".
-                    path_word = []
-                    for j in (-1, 1):
-                        if self.env[p + j].word:
-                            path_word.append(self.env[p + j].token)
-                        else:
-                            raise Exception("Point that doesn't binds namespace and link at place % d" % tk.st)
+                    ns = self.env[p - 1]
+                    wrd_tok = self.env[p + 1]
+                    if not(isinstance(ns, Namespace) and wrd_tok.word):
+                        raise Exception("Point that doesn't binds namespace and link at place % d" % tk.st)
+                    next_val = ns[wrd_tok.tok]
+                    self.env[p - 1] = next_val
+                    self.env.pop(p)
+                    self.env.pop(p + 1)
+                    p -= 1
             p += 1
 
     def __call__(self):
