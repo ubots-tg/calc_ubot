@@ -21,12 +21,12 @@ class Executor:
                     eni = p
                     break
                 elif tk.token in self.procedure.config.brackets:
-                    self.brackets(p, tk.token, False)
+                    self.brackets(p, tk.token, self.env[p - 1])
                 elif tk.token == ".":
                     # At this place, point is using only to use "namespaces".
                     path_word = []
                     for j in (-1, 1):
-                        if sti < p + j < len(self.env) and self.env[p + j].word:
+                        if self.env[p + j].word:
                             path_word.append(self.env[p + j].token)
                         else:
                             raise Exception("Point that doesn't binds namespace and link at place % d" % tk.st)
