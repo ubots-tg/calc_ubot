@@ -71,24 +71,32 @@ class Tokenizer:
                 return op, rev
         return "", False
 
+    def are_satisfying_branches(self, branches):
+        if len(branches) == 1:
+            return branches
+        model = self.procedure.config.names.apply_path(
+            self.procedure.config.specific_operators[branches[0][0]].replace).sides
+        for branch in branches:
+            if not self.procedure.config.specific_operators[branch[0]].branching:
+                return []
+            if self.procedure.config.names.apply_path(
+                    self.procedure.config.specific_operators[branch[0]].replace).sides != model:
+                return []
+        return branches
+
     def is_finished_operator(self, my_op) -> List[Tuple[str, bool]]:
         res = []
-        has_no_branching = False
         while my_op != "":
             for pref_len in range(self.procedure.config.mx_op_size, 0, -1):
                 prefix = my_op[:pref_len]
                 op, rev = self.is_finished_single_operator(prefix)
                 if op:
                     res.append((op, rev))
-                    if not self.procedure.config.specific_operators[op].branching:
-                        has_no_branching = True
                     my_op = my_op[pref_len:]
                     break
             else:
                 return []
-        if has_no_branching and len(res) > 1:
-            return []
-        return res
+        return self.are_satisfying_branches(res)
 
     def split_to_tokens(self):
         """
