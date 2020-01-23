@@ -34,7 +34,7 @@ class Tokenizer:
     @staticmethod
     def is_latin(char: str):
         char = ord(char.lower())
-        return ord("a") <= char <= ord("z")
+        return (ord("a") <= char <= ord("z")) or char == "_"
 
     @staticmethod
     def is_digit(char: str):
@@ -109,7 +109,7 @@ class Tokenizer:
                 continue
             if tp1 in (2, 4):
                 continue
-            if tp1 == tp2:
+            if tp1 == tp2 or (tp1, tp2) == (1, 0):
                 self.tokens[-1].token += ch1
             else:
                 self.tokens.append(Token(ch1, p))
