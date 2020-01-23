@@ -2,6 +2,47 @@ import math
 from typing import Tuple, Callable
 
 
+# TODO: optimize this bullshit (again)
+class CalcUbotName:
+    type: str
+
+    def __init__(self, **kwargs):
+        for k in kwargs:
+            setattr(self, k, kwargs[k])
+
+
+class CalcUbotVal(CalcUbotName):
+    type = ""  # Хз что с этим сделать
+    val = None
+
+
+class Operator(CalcUbotName):
+    type = "op"
+    level: int
+    sides: Tuple[bool, bool, bool]
+    func: Callable
+
+
+class CharOperator(CalcUbotName):
+    type = "__non_name_char_op__"  # Crutch
+    replace: str
+    allow_shuffle = False
+    from_heaven = []
+    branching = True
+
+
+class Namespace(CalcUbotName):
+    type = "ns"
+    cont: dict
+
+    def apply_path(self, path: str):
+        sp_res = path.split(".", 1)
+        in_me = self.cont[sp_res[0]]
+        if len(sp_res) == 1:
+            return in_me
+        return in_me.apply_path(sp_res[1])
+
+
 def cnpk(n, k):
     res = 1
     for u in range(n, n - k, -1):
@@ -17,86 +58,21 @@ def exgcd(a, b):
     return x, y - (a // b) * x, gcd
 
 
-class CalcUbotName:
-    type: str
-
-    def __init__(self, **kwargs):
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
-
-
-class CalcUbotVal(CalcUbotName):
-    val = None
-
-
-class Operator(CalcUbotName):
-    level: int
-    sides: Tuple[bool, bool, bool]
-    func: Callable
-
-
-class CharOperator(CalcUbotName):
-    replace: str
-    allow_shuffle: bool
-    from_heaven = None
-    branching: bool
-
-
-class Namespace(CalcUbotName):
-    cont: dict
-
-
-std_names = {
-    "pi": {
-        "type": "int",
-        "val": math.pi
-    },
-    "comb": {
-        "type": "namespace",
-        "cont": {
-            "comb_c": {
-                "type": "func",
-                "val": cnpk
-            }
-        }
-    },
-    "__addition__": {
-        "type": "op",
-        "level": 1,
-        "sides": (True, False, True),
-        "func": lambda a, b, c: a + b * c
-    },
-    "__fact__": {
-        "type": "op",
-        "level": 3,
-        "sides": (True, False, False),
-        "func": math.factorial
-    },
-    "mod": {
-        "type": "op",
-        "level": 4,
-        "sides": (True, True, True),
-        "func": lambda a, bl, c: a % bl[0] == c % bl[0]
-    }
-}
+std_names = Namespace(cont={
+    "comb": Namespace(cont={
+        "comb_c": CalcUbotVal(val=cnpk)
+    }),
+    "pi": CalcUbotVal(val=math.pi),
+    "__addition__": Operator(level=1, sides=(True, False, True),
+                             func=CalcUbotVal(val=lambda a, b, c: a + b * c)),
+    "__fact__": Operator(level=3, sides=(True, False, False),
+                         func=CalcUbotVal(val=math.factorial)),
+    "mod": Operator(level=1, sides=(True, True, True),
+                    func=CalcUbotVal(val=lambda a, bl, c: a % bl[0] == c % bl[0]))
+})
 
 std_specific_operators = {
-    "+": {
-        "replace": "__addition__",
-        "allow_shuffle": False,
-        "from_heaven": [1],
-        "branching": True
-    },
-    "-": {
-        "replace": "__addition__",
-        "allow_shuffle": False,
-        "from_heaven": [-1],
-        "branching": True
-    },
-    "!": {
-        "replace": "__fact__",
-        "allow_shuffle": False,
-        "from_heaven": [],
-        "branching": False
-    }
+    "+": CharOperator(replace="__addition__", from_heaven=[1]),
+    "-": CharOperator(replace="__addition__", from_heaven=[-1]),
+    "!": CharOperator(replace="__fact__", branching=False),
 }

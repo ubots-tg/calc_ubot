@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from expeval.expeval_std import *
+from expeval.expeval_std import std_names, std_specific_operators
 
 
 # TODO: fix counting token place everywhere
