@@ -1,5 +1,7 @@
+from queue import Queue
 from typing import List, Tuple
 from expeval.expeval_std import std_names, std_specific_operators, CharOperator, Namespace
+from lib.killable_thread import KillableThread
 
 
 # TODO: fix counting token place everywhere
@@ -15,6 +17,9 @@ class Token:
         self.word = word
         self.val = val
         self.op = op
+
+class CalculationTimeoutExpired(Exception):
+    pass
 
 
 class ExpEval:
@@ -53,7 +58,14 @@ class ExpEval:
 
     def comp_exp(self, query) -> Tuple[str, str, bool]:
         try:
-            return ExpEvalProcedure(self, query)()
+            q = Queue()
+            thread = KillableThread(target=lambda config, query, queue: queue.put(ExpEvalProcedure(config, query)()), args=(self, query, q))
+            thread.start()
+            thread.join(1)
+            if thread.is_alive():
+                thread.kill()
+                raise CalculationTimeoutExpired()
+            return q.get()
         except Exception as err:
             return str(err), "", False
 
