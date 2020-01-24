@@ -10,11 +10,6 @@ class CalcUbotName:
             setattr(self, k, kwargs[k])
 
 
-class CalcUbotVal(CalcUbotName):
-    type = ""  # Хз что с этим сделать
-    val = None
-
-
 class Operator(CalcUbotName):
     type = "op"
     level: int
@@ -65,15 +60,12 @@ def exgcd(a, b):
 
 std_names = Namespace(cont={
     "comb": Namespace(cont={
-        "comb_c": CalcUbotVal(val=cnpk)
+        "comb_c": cnpk
     }),
-    "pi": CalcUbotVal(val=math.pi),
-    "__addition__": Operator(level=1, sides=(True, False, True),
-                             func=CalcUbotVal(val=lambda a, b, c: a + b * c)),
-    "__fact__": Operator(level=3, sides=(True, False, False),
-                         func=CalcUbotVal(val=math.factorial)),
-    "mod": Operator(level=1, sides=(True, True, True),
-                    func=CalcUbotVal(val=lambda a, bl, c: a % bl[0] == c % bl[0]))
+    "pi": math.pi,
+    "__addition__": Operator(level=1, sides=(True, False, True), func=lambda a, b, c: a + b * c),
+    "__fact__": Operator(level=3, sides=(True, False, False), func=math.factorial),
+    "mod": Operator(level=1, sides=(True, True, True), func=lambda a, bl, c: a % bl[0] == c % bl[0])
 })
 
 std_specific_operators = {

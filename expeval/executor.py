@@ -18,7 +18,9 @@ class Executor:
                     eni = p
                     break
                 elif tk.token in self.procedure.config.brackets:
-                    self.brackets(p, tk.token, self.env[p - 1])
+                    self.brackets(p, tk.token, False)
+                elif tk.op:
+                    pass
                 elif tk.word:
                     from_root_val = self.procedure.config.names[self.env.pop(p).token]
                     self.env.insert(p, from_root_val)
