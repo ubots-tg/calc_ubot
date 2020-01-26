@@ -85,6 +85,12 @@ class Executor:
 
             for cur_level in self.procedure.config.execution_levels:
                 p = sti + 1
+                while True:
+                    if isinstance(self.env[p], Token):
+                        if self.env[p].token in (end_bracket, self.procedure.config.sep):
+                            break
+                    elif isinstance(self.env[p], CompOperator):
+                        operator: CompOperator = self.env[p]
 
             res = self.env[sti + 1]
             if mode == 1:
