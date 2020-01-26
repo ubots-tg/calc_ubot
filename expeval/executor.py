@@ -8,10 +8,6 @@ class Executor:
         self.procedure = procedure
         self.env: List = tokens.copy()
 
-    def is_for_call(self, p):
-        before = self.env[p - 1]
-        return callable(before) or isinstance(before, CompOperator)
-
     def replace_range(self, start, length, value):
         cleaning_progress = 0
         while cleaning_progress < length:
@@ -52,8 +48,18 @@ class Executor:
                             break
                         else:
                             raise Exception("Are you stupid? Wtf a separator doing here (%d)" % tk.st)
+                    elif tk.token == "(":
+                        # Bracket for functions
+                        called_by_func = callable(self.env[p - 1])
+                        called_by_operator = isinstance(self.env[p - 1], CompOperator)
+                        self.brackets(p, tk.token, 1 if called_by_func or called_by_operator else 0)
+                        if called_by_func:
+                            p -= 1
+                            func_res = self.env[p](self.env[p + 1])
+                            self.replace_range(p, 2, func_res)
                     elif tk.token in self.procedure.config.brackets:
-                        self.brackets(p, tk.token, 1 if tk.token != "(" or self.is_for_call(p) else 0)
+                        # Other brackets
+                        self.brackets(p, tk.token, 1)
                     elif tk.op:
                         br = self.env.pop(p).token
                         transformed: List[Operator] = []
@@ -76,8 +82,10 @@ class Executor:
                         self.env.pop(p + 1)
                         p -= 1
                 p += 1
+
             for cur_level in self.procedure.config.execution_levels:
-                pass
+                p = sti + 1
+
             res = self.env[sti + 1]
             if mode == 1:
                 self.replace_range(sti, 3, res)
