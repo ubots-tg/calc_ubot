@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from expeval.expeval import ExpEvalProcedure, Token
-from expeval.expeval_std import Namespace, Operator
+from expeval.expeval_std import Namespace, Operator, CompOperator
 
 
 class Executor:
@@ -8,13 +8,9 @@ class Executor:
         self.procedure = procedure
         self.env: List = tokens.copy()
 
-    def try_convert_word_token_to_op(self, p):
-        if isinstance(self.env[p], Operator):
-            pass
-
     def is_for_call(self, p):
-        if callable(self.env[p - 1]):
-            return True
+        before = self.env[p - 1]
+        return callable(before) or isinstance(before, CompOperator)
 
     def brackets(self, sti, bracket, belong_as_tuple):
         p = sti + 1
@@ -29,7 +25,11 @@ class Executor:
                     self.brackets(p, tk.token, False)
                 elif tk.op:
                     br = self.env.pop(p).token
-                    self.env.insert(p, CompOperator(br))
+                    transformed: List[Operator] = []
+                    for op_path, rev in br:
+                        transformed.append(self.procedure.config.names[op_path])
+                        transformed[-1].rev = rev
+                    self.env.insert(p, CompOperator(transformed))
                 elif tk.word:
                     from_root_val = self.procedure.config.names[self.env.pop(p).token]
                     self.env.insert(p, from_root_val)
