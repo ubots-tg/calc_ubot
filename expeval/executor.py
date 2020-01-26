@@ -53,7 +53,7 @@ class Executor:
                         else:
                             raise Exception("Are you stupid? Wtf a separator doing here (%d)" % tk.st)
                     elif tk.token in self.procedure.config.brackets:
-                        self.brackets(p, tk.token, 1 if self.is_for_call(p) else 0)
+                        self.brackets(p, tk.token, 1 if tk.token == "(" and self.is_for_call(p) else 0)
                     elif tk.op:
                         br = self.env.pop(p).token
                         transformed: List[Operator] = []
