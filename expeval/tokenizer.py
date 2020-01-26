@@ -1,5 +1,6 @@
 from typing import List, Tuple
 from expeval.expeval import ExpEvalProcedure, Token
+from ulib.useful import is_from_same
 
 
 class Tokenizer:
@@ -71,16 +72,8 @@ class Tokenizer:
                 return op, rev
         return "", False
 
-    def are_satisfying_branches(self, branches):
-        if len(branches) == 1:
-            return branches
-        model = self.procedure.config.names[self.procedure.config.specific_operators[branches[0][0]].replace].sides
-        for branch in branches:
-            if not self.procedure.config.specific_operators[branch[0]].branching:
-                return []
-            if self.procedure.config.names[self.procedure.config.specific_operators[branch[0]].replace].sides != model:
-                return []
-        return branches
+    def get_single_char_op_sides(self, in_br_op):
+        return self.procedure.config.names[self.procedure.config.specific_operators[in_br_op[0]].replace].sides
 
     def is_finished_operator(self, my_op) -> List[Tuple[str, bool]]:
         res = []
@@ -94,7 +87,8 @@ class Tokenizer:
                     break
             else:
                 return []
-        return self.are_satisfying_branches(res)
+        same_sides = is_from_same(map(self.get_single_char_op_sides, res))
+        return res if same_sides else []
 
     def split_to_tokens(self):
         """

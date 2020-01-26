@@ -3,14 +3,6 @@ from expeval.expeval import ExpEvalProcedure, Token
 from expeval.expeval_std import Namespace, Operator
 
 
-class CompOperator:
-    def __init__(self, br):
-        self.branches: List[Tuple[str, bool]] = br
-
-    def is_not_branching(self):
-        return self.branches.__len__() == 1
-
-
 class Executor:
     def __init__(self, procedure: ExpEvalProcedure, tokens):
         self.procedure = procedure
