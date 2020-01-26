@@ -12,6 +12,13 @@ class Executor:
         before = self.env[p - 1]
         return callable(before) or isinstance(before, CompOperator)
 
+    def replace_range(self, start, length, value):
+        cleaning_progress = 0
+        while cleaning_progress < length:
+            self.env.pop(start)
+            cleaning_progress += 1
+        self.env.insert(start, value)
+
     def brackets(self, sti, bracket, mode):
         """
         :param sti:
@@ -32,9 +39,7 @@ class Executor:
                 if self.env[p].token == end_bracket:
                     break
                 p += 2
-            for cleaning_progress in range(2 * len(_tuple) + 1):
-                self.env.pop(sti)
-            self.env.insert(sti, _tuple)
+            self.replace_range(sti, 2 * len(_tuple) + 1, _tuple)
         else:
             p = sti + 1
             while True:
@@ -73,6 +78,11 @@ class Executor:
                 p += 1
             for cur_level in self.procedure.config.execution_levels:
                 pass
+            res = self.env[sti + 1]
+            if mode == 1:
+                self.replace_range(sti, 3, res)
+            else:
+                return res
 
     def __call__(self):
         self.env.insert(0, Token("("))
