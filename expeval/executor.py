@@ -36,9 +36,15 @@ class Executor:
             while True:
                 if isinstance(self.env[p], Token):
                     tk: Token = self.env[p]
-                    if tk.token == end_bracket or (mode == 3 and tk.token == self.procedure.config.sep):
+                    if tk.token == end_bracket:
                         eni = p
                         break
+                    if tk.token == self.procedure.config.sep:
+                        if mode == 3:
+                            eni = p
+                            break
+                        else:
+                            raise Exception("Are you stupid? Wtf a separator doing here (%d)" % tk.st)
                     elif tk.token in self.procedure.config.brackets:
                         self.brackets(p, tk.token, 1 if self.is_for_call(p) else 0)
                     elif tk.op:
