@@ -20,13 +20,19 @@ class Executor:
         0 - prosto skobki
         1 - called
         2 - (,  or  ,,  or  ,)
-        :return: something if mode = 2 and nothing in other case
+        :return: something and new_pointer if mode = 2 and nothing in other case
         """
+        end_bracket = self.procedure.config.brackets[bracket]
         if mode == 1:
-            pass
+            p = sti
+            _tuple = []
+            while True:
+                elem, p = self.brackets(sti, bracket, 2)
+                _tuple.append(elem)
+                if self.env[p].token == end_bracket:
+                    break
         else:
             p = sti + 1
-            end_bracket = self.procedure.config.brackets[bracket]
             while True:
                 if isinstance(self.env[p], Token):
                     tk: Token = self.env[p]
