@@ -65,11 +65,16 @@ std_names = Namespace(cont={
     "pi": math.pi,
     "__addition__": Operator(level=1, sides=(True, False, True), func=lambda a, b, c: a + b * c),
     "__fact__": Operator(level=3, sides=(True, False, False), func=math.factorial),
-    "mod": Operator(level=1, sides=(True, True, True), func=lambda a, bl, c: a % bl[0] == c % bl[0])
+    "mod": Operator(level=1, sides=(True, True, True), func=lambda a, bl, c: a % bl[0] == c % bl[0]),
+    "sqrt": math.sqrt,
+    "__multiplication__": Operator(level=2, sides=(True, False, True), func=lambda a, b: a * b),
+    "__division__": Operator(level=2, sides=(True, False, True), func=lambda a, b: a / b)
 })
 
 std_specific_operators = {
     "+": CharOperator(replace="__addition__", from_heaven=[1]),
     "-": CharOperator(replace="__addition__", from_heaven=[-1]),
     "!": CharOperator(replace="__fact__", branching=False),
+    "*": CharOperator(replace="__multiplication__"),
+    "/": CharOperator(replace="__division__")
 }
