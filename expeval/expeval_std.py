@@ -1,5 +1,5 @@
 import math
-from typing import Tuple, Callable
+from typing import Tuple, Callable, List
 from ulib.useful import UsefulObj
 
 
@@ -7,6 +7,7 @@ class Operator(UsefulObj):
     level: int
     sides: Tuple[bool, bool, bool]
     func: Callable
+    rev: bool = False  # For executor
 
 
 class CharOperator(UsefulObj):
@@ -17,7 +18,10 @@ class CharOperator(UsefulObj):
 
 
 class CompOperator(UsefulObj):
-    pass
+    branches: List[Operator]
+
+    def get_level(self):
+        return min(map(lambda op: op.level, self.branches))
 
 
 class Namespace(UsefulObj):
@@ -27,6 +31,8 @@ class Namespace(UsefulObj):
         sp_res = path.split(".", 1)
         in_me = self.cont[sp_res[0]]
         if len(sp_res) == 1:
+            if isinstance(in_me, Operator):
+                return CompOperator(branches=[in_me])
             return in_me
         return in_me.apply_path(sp_res[1])
 
