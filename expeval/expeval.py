@@ -1,7 +1,7 @@
 from queue import Queue
 from typing import Dict, Tuple
 from expeval.expeval_std import std_names, std_specific_operators, CharOperator, Namespace
-from lib.killable_thread import KillableThread
+from ulib.killable_thread import KillableThread
 
 
 # TODO: fix counting token place everywhere

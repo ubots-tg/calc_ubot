@@ -1,12 +1,28 @@
-from typing import List
+from typing import List, Tuple
 from expeval.expeval import ExpEvalProcedure, Token
-from expeval.expeval_std import Namespace
+from expeval.expeval_std import Namespace, Operator
+
+
+class CompOperator:
+    def __init__(self, br):
+        self.branches: List[Tuple[str, bool]] = br
+
+    def is_not_branching(self):
+        return self.branches.__len__() == 1
 
 
 class Executor:
     def __init__(self, procedure: ExpEvalProcedure, tokens):
         self.procedure = procedure
         self.env: List = tokens.copy()
+
+    def try_convert_word_token_to_op(self, p):
+        if isinstance(self.env[p], Operator):
+            pass
+
+    def is_for_call(self, p):
+        if callable(self.env[p - 1]):
+            return True
 
     def brackets(self, sti, bracket, belong_as_tuple):
         p = sti + 1
@@ -20,7 +36,8 @@ class Executor:
                 elif tk.token in self.procedure.config.brackets:
                     self.brackets(p, tk.token, False)
                 elif tk.op:
-                    pass
+                    br = self.env.pop(p).token
+                    self.env.insert(p, CompOperator(br))
                 elif tk.word:
                     from_root_val = self.procedure.config.names[self.env.pop(p).token]
                     self.env.insert(p, from_root_val)

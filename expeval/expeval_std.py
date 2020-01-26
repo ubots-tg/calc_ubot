@@ -1,32 +1,26 @@
 import math
 from typing import Tuple, Callable
+from ulib.useful import UsefulObj
 
 
-class CalcUbotName:
-    type: str
-
-    def __init__(self, **kwargs):
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
-
-
-class Operator(CalcUbotName):
-    type = "op"
+class Operator(UsefulObj):
     level: int
     sides: Tuple[bool, bool, bool]
     func: Callable
 
 
-class CharOperator(CalcUbotName):
-    type = "__non_name_char_op__"  # Crutch
+class CharOperator(UsefulObj):
     replace: str
     allow_shuffle = False
     from_heaven = []
     branching = True
 
 
-class Namespace(CalcUbotName):
-    type = "ns"
+class CompOperator(UsefulObj):
+    pass
+
+
+class Namespace(UsefulObj):
     cont: dict
 
     def apply_path(self, path: str):
