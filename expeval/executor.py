@@ -20,28 +20,30 @@ class Executor:
         0 - prosto skobki
         1 - called
         2 - (,  or  ,,  or  ,)
-        :return: something and new_pointer if mode = 2 and nothing in other case
+        :return: something if mode = 2 and nothing in other case
         """
         end_bracket = self.procedure.config.brackets[bracket]
         if mode == 1:
             p = sti
             _tuple = []
             while True:
-                elem, p = self.brackets(sti, bracket, 2)
+                elem = self.brackets(sti, bracket, 2)
                 _tuple.append(elem)
                 if self.env[p].token == end_bracket:
                     break
+                p += 2
+            for cleaning_progress in range(2 * len(_tuple) + 1):
+                self.env.pop(sti)
+            self.env.insert(sti, _tuple)
         else:
             p = sti + 1
             while True:
                 if isinstance(self.env[p], Token):
                     tk: Token = self.env[p]
                     if tk.token == end_bracket:
-                        eni = p
                         break
                     if tk.token == self.procedure.config.sep:
                         if mode == 3:
-                            eni = p
                             break
                         else:
                             raise Exception("Are you stupid? Wtf a separator doing here (%d)" % tk.st)
@@ -69,6 +71,8 @@ class Executor:
                         self.env.pop(p + 1)
                         p -= 1
                 p += 1
+            for cur_level in self.procedure.config.execution_levels:
+                pass
 
     def __call__(self):
         self.env.insert(0, Token("("))
