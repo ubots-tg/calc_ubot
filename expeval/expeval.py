@@ -28,7 +28,7 @@ class ExpEval:
     specific_operators: Dict[CharOperator]
 
     def __init__(self, names=None, specific_operators=None):
-        # пффффф
+        # config
         if names is None:
             self.names = std_names
         else:
@@ -40,6 +40,7 @@ class ExpEval:
         self.other_symbols = list("()[]{},;.")  # They all 1 char length
         self.pares = {"<": ">", "\\": "/"}
         self.brackets = {"(": "),", "[": "]", "{": "}"}
+        self.sep = ","
 
         # execution levels
         self.execution_levels = set()
