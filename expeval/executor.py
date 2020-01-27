@@ -50,11 +50,20 @@ class Executor:
                     tk: Token = self.env[p]
                     if tk.token == end_bracket:
                         break
-                    if tk.token == self.procedure.config.sep:
+                    elif tk.token == self.procedure.config.sep:
                         if mode == 3:
                             break
                         else:
                             raise Exception("Are you stupid? Wtf a separator doing here (%d)" % tk.st)
+                    elif tk.op:
+                        br = self.env.pop(p).token
+                        transformed: List[Operator] = []
+                        for op_path, rev in br:
+                            char_op = self.procedure.config.specific_operators[op_path]
+                            transformed.append(self.procedure.config.names[char_op.replace])
+                            transformed[-1].rev = rev
+                            transformed[-1].from_heaven = char_op.from_heaven
+                        self.env.insert(p, CompOperator(transformed))
                     elif tk.token == "(":
                         # Bracket for functions
                         called_by_func = callable(self.env[p - 1])
@@ -67,15 +76,6 @@ class Executor:
                     elif tk.token in self.procedure.config.brackets:
                         # Other brackets
                         self.brackets(p, tk.token, 1)
-                    elif tk.op:
-                        br = self.env.pop(p).token
-                        transformed: List[Operator] = []
-                        for op_path, rev in br:
-                            char_op = self.procedure.config.specific_operators[op_path]
-                            transformed.append(self.procedure.config.names[char_op.replace])
-                            transformed[-1].rev = rev
-                            transformed[-1].from_heaven = char_op.from_heaven
-                        self.env.insert(p, CompOperator(transformed))
                     elif tk.word:
                         from_root_val = self.procedure.config.names[self.env.pop(p).token]
                         self.env.insert(p, CompOperator.try_std_op_to_this(from_root_val))
