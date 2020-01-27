@@ -131,5 +131,6 @@ class Executor:
     def __call__(self):
         self.env.insert(0, Token("("))
         self.env.append(Token(")"))
-        self.brackets(0, "(", False)
-        return self.env[0], ""
+        self.brackets(0, "(", 0)
+        # TODO: add pretty result
+        return self.env[0], "", True

@@ -59,6 +59,10 @@ class ExpEval:
         self.mx_op_size = max(map(lambda n: len(n), self.specific_operators.keys()))
 
     def comp_exp(self, query) -> Tuple[str, str, bool]:
+        """
+        :param query: calculation query text
+        :return: result, pretty_result, success
+        """
         try:
             q = Queue()
             thread = KillableThread(target=lambda config, query, queue: queue.put(ExpEvalProcedure(config, query)()),
