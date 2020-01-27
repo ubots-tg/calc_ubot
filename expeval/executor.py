@@ -120,7 +120,7 @@ class Executor:
                                 for single_operator in operator.branches:
                                     op_res.add(self.execute_single_operator(single_operator,
                                                                             left_n_right.copy(), dop_information))
-                            # TODO: replace operator construction by result
+                            self.replace_range(p, 1, op_res)
 
             res = self.env[sti + 1]
             if mode == 1:
