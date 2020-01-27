@@ -1,6 +1,6 @@
 from queue import Queue
 from typing import Dict, Tuple
-from expeval.expeval_std import std_names, std_specific_operators, CharOperator, Namespace
+from expeval.expeval_std import std_names, std_specific_operators, CharOperator, Namespace, Operator
 from ulib.killable_thread import KillableThread
 
 
@@ -45,7 +45,7 @@ class ExpEval:
         # execution levels
         self.execution_levels = set()
         for name in self.names:
-            if self.names[name].type == "op":
+            if isinstance(self.names[name], Operator):
                 self.execution_levels.add(self.names[name].level)
         self.execution_levels = sorted(list(self.execution_levels), reverse=True)
 
