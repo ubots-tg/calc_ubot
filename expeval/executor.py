@@ -92,7 +92,9 @@ class Executor:
                     elif isinstance(self.env[p], CompOperator):
                         operator: CompOperator = self.env[p]
                         if operator.get_level() == cur_level:
-                            pass
+                            # left, right, dop, from_heaven
+                            if operator.model.sides[1]:
+                                dop_information = self.env.pop(p + 1)
 
             res = self.env[sti + 1]
             if mode == 1:

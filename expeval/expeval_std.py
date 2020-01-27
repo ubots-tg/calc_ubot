@@ -20,6 +20,10 @@ class CharOperator(UsefulObj):
 class CompOperator(UsefulObj):
     branches: List[Operator]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.model = self.branches[0]
+
     def get_level(self):
         return min(map(lambda op: op.level, self.branches))
 
