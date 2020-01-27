@@ -64,8 +64,10 @@ class Executor:
                         br = self.env.pop(p).token
                         transformed: List[Operator] = []
                         for op_path, rev in br:
-                            transformed.append(self.procedure.config.names[op_path])
+                            char_op = self.procedure.config.specific_operators[op_path]
+                            transformed.append(self.procedure.config.names[char_op.replace])
                             transformed[-1].rev = rev
+                            transformed[-1].from_heaven = char_op.from_heaven
                         self.env.insert(p, CompOperator(transformed))
                     elif tk.word:
                         from_root_val = self.procedure.config.names[self.env.pop(p).token]

@@ -7,7 +7,9 @@ class Operator(UsefulObj):
     level: int
     sides: Tuple[bool, bool, bool]
     func: Callable
-    rev: bool = False  # For executor
+    # TODO: create new class CompSingleOperator to remove this crutch
+    rev: bool = False
+    from_heaven = []
 
 
 class CharOperator(UsefulObj):
