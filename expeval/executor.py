@@ -16,10 +16,10 @@ class Executor:
         self.env.insert(start, value)
 
     @staticmethod
-    def execute_single_operator(single_operator: Operator, left, right, dop):
+    def execute_single_operator(single_operator: Operator, left_n_right, dop):
         if single_operator.rev:
-            left, right = right, left
-        op_func_result = single_operator.func(*([left, right] + dop + single_operator.from_heaven))
+            left_n_right = left_n_right[::-1]
+        op_func_result = single_operator.func(*(left_n_right + dop + single_operator.from_heaven))
         return op_func_result
 
     def brackets(self, sti, bracket, mode):
@@ -102,23 +102,24 @@ class Executor:
                         operator: CompOperator = self.env[p]
                         if operator.get_level() == cur_level:
                             # left, right, dop, from_heaven
-                            dop_information = left = right = []
+                            dop_information = left_n_right = []
                             if operator.model.sides[1]:
                                 # Нам не мешает никак
                                 dop_information = self.env.pop(p + 1)
                             if operator.model.sides[0]:
-                                left = self.env.pop(p - 1)
+                                left_n_right.append(self.env.pop(p - 1))
                                 p -= 1
                             if operator.model.sides[2]:
-                                right = self.env.pop(p + 1)
+                                left_n_right.append(self.env.pop(p + 1))
 
                             if operator.branches.__len__() == 1:
-                                op_res = self.execute_single_operator(operator.model, left, right, dop_information)
+                                op_res = self.execute_single_operator(operator.model,
+                                                                      left_n_right.copy(), dop_information)
                             else:
                                 op_res = set()
                                 for single_operator in operator.branches:
                                     op_res.add(self.execute_single_operator(single_operator,
-                                                                            left, right, dop_information))
+                                                                            left_n_right.copy(), dop_information))
                             # TODO: replace operator construction by result
 
             res = self.env[sti + 1]
