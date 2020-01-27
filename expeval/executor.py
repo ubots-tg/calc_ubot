@@ -15,6 +15,13 @@ class Executor:
             cleaning_progress += 1
         self.env.insert(start, value)
 
+    @staticmethod
+    def execute_single_operator(single_operator: Operator, left, right, dop):
+        if single_operator.rev:
+            left, right = right, left
+        op_func_result = single_operator.func(*([left, right] + dop + single_operator.from_heaven))
+        return op_func_result
+
     def brackets(self, sti, bracket, mode):
         """
         :param sti:
@@ -99,14 +106,20 @@ class Executor:
                             if operator.model.sides[1]:
                                 # Нам не мешает никак
                                 dop_information = self.env.pop(p + 1)
-                            # if operator.model.sides[0]:
-                            #     left = self.env.pop(p - 1)
-                            #     p -= 1
-                            # if operator.model.sides[2]:
-                            #     right = self.env.pop(p + 1)
-                            # if operator.model.rev:
-                            #     left, right = right, left
-                            # self.replace_range(p, 1, )
+                            if operator.model.sides[0]:
+                                left = self.env.pop(p - 1)
+                                p -= 1
+                            if operator.model.sides[2]:
+                                right = self.env.pop(p + 1)
+
+                            if operator.branches.__len__() == 1:
+                                op_res = self.execute_single_operator(operator.model, left, right, dop_information)
+                            else:
+                                op_res = set()
+                                for single_operator in operator.branches:
+                                    op_res.add(self.execute_single_operator(single_operator,
+                                                                            left, right, dop_information))
+                            # TODO: replace operator construction by result
 
             res = self.env[sti + 1]
             if mode == 1:

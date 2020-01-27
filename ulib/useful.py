@@ -1,5 +1,4 @@
 def is_from_same(itr):
-    # TODO: TODO
     if len(itr) == 0:
         return True
     model = itr[0]
@@ -10,7 +9,6 @@ def is_from_same(itr):
 
 
 class UsefulObj:
-    # TODO: TODO
     args_trick = []
 
     def __init__(self, *args, **kwargs):
