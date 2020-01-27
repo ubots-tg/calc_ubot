@@ -1,4 +1,5 @@
 def is_from_same(itr):
+    itr = list(itr)
     if len(itr) == 0:
         return True
     model = itr[0]
