@@ -21,6 +21,7 @@ class CharOperator(UsefulObj):
 
 class CompOperator(UsefulObj):
     branches: List[Operator]
+    args_trick = ["branches"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -63,7 +63,7 @@ class Executor:
                             transformed.append(self.procedure.config.names[char_op.replace])
                             transformed[-1].rev = rev
                             transformed[-1].from_heaven = char_op.from_heaven
-                        self.env.insert(p, CompOperator(transformed))
+                        self.env.insert(p, CompOperator(branches=transformed))
                     elif tk.token == "(":
                         # Bracket for functions
                         called_by_func = callable(self.env[p - 1])
