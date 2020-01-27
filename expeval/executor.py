@@ -78,18 +78,16 @@ class Executor:
                         self.env.insert(p, CompOperator(transformed))
                     elif tk.word:
                         from_root_val = self.procedure.config.names[self.env.pop(p).token]
-                        self.env.insert(p, from_root_val)
+                        self.env.insert(p, CompOperator.try_std_op_to_this(from_root_val))
                     elif tk.token == ".":
                         # At this place, point is using only to use "namespaces".
                         ns = self.env[p - 1]
                         wrd_tok = self.env[p + 1]
                         if not(isinstance(ns, Namespace) and wrd_tok.word):
-                            raise Exception("Point that doesn't binds namespace and link at place % d" % tk.st)
-                        next_val = ns[wrd_tok.tok]
-                        self.env[p - 1] = next_val
-                        self.env.pop(p)
-                        self.env.pop(p + 1)
+                            raise Exception("Point that doesn't bind namespace and link at place % d" % tk.st)
+                        next_val = CompOperator.try_std_op_to_this(ns[wrd_tok.tok])
                         p -= 1
+                        self.replace_range(p, 3, next_val)
                 p += 1
 
             for cur_level in self.procedure.config.execution_levels:

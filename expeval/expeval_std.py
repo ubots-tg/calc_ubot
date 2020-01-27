@@ -29,6 +29,10 @@ class CompOperator(UsefulObj):
     def get_level(self):
         return min(map(lambda op: op.level, self.branches))
 
+    @staticmethod
+    def try_std_op_to_this(maybe_op):
+        return CompOperator(branches=[maybe_op]) if isinstance(maybe_op, Operator) else maybe_op
+
 
 class Namespace(UsefulObj):
     cont: dict
@@ -37,8 +41,6 @@ class Namespace(UsefulObj):
         sp_res = path.split(".", 1)
         in_me = self.cont[sp_res[0]]
         if len(sp_res) == 1:
-            if isinstance(in_me, Operator):
-                return CompOperator(branches=[in_me])
             return in_me
         return in_me.apply_path(sp_res[1])
 
