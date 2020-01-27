@@ -95,8 +95,18 @@ class Executor:
                         operator: CompOperator = self.env[p]
                         if operator.get_level() == cur_level:
                             # left, right, dop, from_heaven
+                            dop_information = left = right = []
                             if operator.model.sides[1]:
+                                # Нам не мешает никак
                                 dop_information = self.env.pop(p + 1)
+                            # if operator.model.sides[0]:
+                            #     left = self.env.pop(p - 1)
+                            #     p -= 1
+                            # if operator.model.sides[2]:
+                            #     right = self.env.pop(p + 1)
+                            # if operator.model.rev:
+                            #     left, right = right, left
+                            # self.replace_range(p, 1, )
 
             res = self.env[sti + 1]
             if mode == 1:
