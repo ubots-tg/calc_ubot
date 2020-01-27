@@ -124,6 +124,7 @@ class Tokenizer:
         self.split_to_tokens()
         tokenizer_fixer = TokenizerFixer(self)
         self.tokens = tokenizer_fixer()
+        # print(self.tokens)
         return self.tokens
 
 

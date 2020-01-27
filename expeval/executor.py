@@ -44,8 +44,14 @@ class Executor:
                 p += 2
             self.replace_range(sti, 2 * len(_tuple) + 1, _tuple)
         else:
+            # print(end_bracket)
             p = sti + 1
             while True:
+                # print("===================")
+                # for tk_or_wtf in self.env:
+                #     print(tk_or_wtf)
+                # print(p)
+                # print("===================")
                 if isinstance(self.env[p], Token):
                     tk: Token = self.env[p]
                     if tk.token == end_bracket:

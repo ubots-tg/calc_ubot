@@ -18,6 +18,9 @@ class Token:
         self.val = val
         self.op = op
 
+    def __repr__(self):
+        return f"UBOT TOKEN -> body: \"{self.token}\"; is_word: {self.word}; is_val: {self.val} is_op: {self.op} in {self.st}"
+
 
 class CalculationTimeoutExpired(Exception):
     pass
@@ -39,7 +42,7 @@ class ExpEval:
             self.specific_operators = specific_operators
         self.other_symbols = list("()[]{},;.")  # They all 1 char length
         self.pares = {"<": ">", "\\": "/"}
-        self.brackets = {"(": "),", "[": "]", "{": "}"}
+        self.brackets = {"(": ")", "[": "]", "{": "}"}
         self.sep = ","
 
         # execution levels
