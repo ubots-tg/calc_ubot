@@ -25,7 +25,7 @@ class CalculationTimeoutExpired(Exception):
 
 class ExpEval:
     names: Namespace
-    specific_operators: Dict[CharOperator]
+    specific_operators: Dict[str, CharOperator]
 
     def __init__(self, names=None, specific_operators=None):
         # config
