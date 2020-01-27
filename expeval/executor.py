@@ -91,6 +91,8 @@ class Executor:
                             break
                     elif isinstance(self.env[p], CompOperator):
                         operator: CompOperator = self.env[p]
+                        if operator.get_level() == cur_level:
+                            pass
 
             res = self.env[sti + 1]
             if mode == 1:
