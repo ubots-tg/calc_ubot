@@ -112,11 +112,14 @@ class Executor:
                     elif isinstance(self.env[p], CompOperator):
                         operator: CompOperator = self.env[p]
                         if operator.get_level() == cur_level:
+                            # print(operator.branches[0].sides)
                             # left, right, dop, from_heaven
-                            dop_information = left_n_right = []
+                            dop_information = []
+                            left_n_right = []
                             if operator.model.sides[1]:
                                 # Нам не мешает никак
                                 dop_information = self.env.pop(p + 1)
+                                # print("+")
                             if operator.model.sides[0]:
                                 left_n_right.append(self.env.pop(p - 1))
                                 p -= 1
@@ -124,6 +127,7 @@ class Executor:
                                 left_n_right.append(self.env.pop(p + 1))
 
                             if operator.branches.__len__() == 1:
+                                # print(dop_information)
                                 op_res = self.execute_single_operator(operator.model, left_n_right.copy(), dop_information)
                             else:
                                 op_res = set()
