@@ -117,13 +117,11 @@ class Executor:
                                 left_n_right.append(self.env.pop(p + 1))
 
                             if operator.branches.__len__() == 1:
-                                op_res = self.execute_single_operator(operator.model,
-                                                                      left_n_right.copy(), dop_information)
+                                op_res = self.execute_single_operator(operator.model, left_n_right.copy(), dop_information)
                             else:
                                 op_res = set()
                                 for single_operator in operator.branches:
-                                    op_res.add(self.execute_single_operator(single_operator,
-                                                                            left_n_right.copy(), dop_information))
+                                    op_res.add(self.execute_single_operator(single_operator, left_n_right.copy(), dop_information))
                             self.replace_range(p, 1, op_res)
                     p += 1
 
