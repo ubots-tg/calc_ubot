@@ -77,5 +77,6 @@ def main():
 
 
 if __name__ == '__main__':
+    # TODO: сделать логгинг
     expr_evaluator = ExpEval()
     main()

@@ -23,7 +23,6 @@ class Executor:
         return op_func_result
 
     def brackets(self, sti, bracket, mode):
-        print(self.env, sti)
         """
         :param sti:
         :param bracket:
