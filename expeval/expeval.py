@@ -6,6 +6,7 @@ from ulib.killable_thread import KillableThread
 
 # TODO: fix counting token place everywhere
 # TODO: add classes like WordToken, OperatorToken etc...
+# TODO: move this class in tokenizer.py
 class Token:
     def __init__(self, token, st=-1, word=False, val=False, op=False):
         """
@@ -19,7 +20,7 @@ class Token:
         self.op = op
 
     def __repr__(self):
-        return f"UBOT TOKEN -> body: \"{self.token}\"; is_word: {self.word}; is_val: {self.val} is_op: {self.op} in {self.st}"
+        return f"|UBOT TOKEN -> body: \"{self.token}\"; is_word: {self.word}; is_val: {self.val} is_op: {self.op} in {self.st}|"
 
 
 class CalculationTimeoutExpired(Exception):

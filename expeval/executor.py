@@ -14,6 +14,7 @@ class Executor:
             self.env.pop(start)
             cleaning_progress += 1
         self.env.insert(start, value)
+        # print("+", start, length, value, self.env)
 
     @staticmethod
     def execute_single_operator(single_operator: Operator, left_n_right, dop):
@@ -137,8 +138,9 @@ class Executor:
                     p += 1
 
             res = self.env[sti + 1]
-            if mode == 1:
+            if mode == 0:
                 self.replace_range(sti, 3, res)
+                # print(res)
             else:
                 return res
 
@@ -147,4 +149,5 @@ class Executor:
         self.env.append(Token(")"))
         self.brackets(0, "(", 0)
         # TODO: add pretty result
+        # print(self.env)
         return self.env[0], "", True
