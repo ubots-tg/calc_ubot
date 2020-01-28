@@ -23,6 +23,7 @@ class Executor:
         return op_func_result
 
     def brackets(self, sti, bracket, mode):
+        print(self.env, sti)
         """
         :param sti:
         :param bracket:
@@ -125,6 +126,7 @@ class Executor:
                                     op_res.add(self.execute_single_operator(single_operator,
                                                                             left_n_right.copy(), dop_information))
                             self.replace_range(p, 1, op_res)
+                    p += 1
 
             res = self.env[sti + 1]
             if mode == 1:
