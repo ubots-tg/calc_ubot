@@ -77,7 +77,7 @@ class Executor:
                         self.env.insert(p, CompOperator(branches=transformed))
                     elif tk.val:
                         # TODO: rename Token.val to Token.integer. Maybe i will add strings
-                        self.env[p] = int(self.env[p].token)
+                        self.env[p] = float(self.env[p].token)
                     elif tk.token == "(":
                         # Bracket for functions
                         called_by_func = callable(self.env[p - 1])
