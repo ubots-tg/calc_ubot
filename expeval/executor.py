@@ -19,6 +19,10 @@ class Executor:
     def execute_single_operator(single_operator: Operator, left_n_right, dop):
         if single_operator.rev:
             left_n_right = left_n_right[::-1]
+        # print(left_n_right + dop + single_operator.from_heaven)
+        # print(left_n_right)
+        # print(dop)
+        # print(single_operator.from_heaven)
         op_func_result = single_operator.func(*(left_n_right + dop + single_operator.from_heaven))
         return op_func_result
 
@@ -70,6 +74,9 @@ class Executor:
                             transformed[-1].rev = rev
                             transformed[-1].from_heaven = char_op.from_heaven
                         self.env.insert(p, CompOperator(branches=transformed))
+                    elif tk.val:
+                        # TODO: rename Token.val to Token.integer. Maybe i will add strings
+                        self.env[p] = int(self.env[p].token)
                     elif tk.token == "(":
                         # Bracket for functions
                         called_by_func = callable(self.env[p - 1])
