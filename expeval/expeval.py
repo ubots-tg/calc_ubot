@@ -77,7 +77,7 @@ class ExpEval:
                 raise CalculationTimeoutExpired()
             return q.get()
         except Exception as err:
-            return str(err), "", False
+            return err.__class__.__name__ + " " + str(err), "", False
 
 
 class ExpEvalProcedure:
