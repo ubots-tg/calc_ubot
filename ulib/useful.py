@@ -1,4 +1,4 @@
-from typing import Iterable, List
+from typing import Iterable, List, Callable
 
 
 def is_from_same(itr):
@@ -26,6 +26,16 @@ def uncover(obj) -> List:
     res = []
     uncover_rec(obj)
     return res
+
+
+class ListMcPolymorph:
+    """Понимайте это как хотите"""
+    def __init__(self, init_val, val_appending: Callable):
+        self.val = init_val
+        self.val_appending = val_appending
+
+    def add(self, what):
+        self.val_appending(self.val, what)
 
 
 class UsefulObj:
