@@ -28,16 +28,6 @@ def uncover(obj) -> List:
     return res
 
 
-class ListMcPolymorph:
-    """Понимайте это как хотите"""
-    def __init__(self, init_val, val_appending: Callable):
-        self.val = init_val
-        self.val_appending = val_appending
-
-    def add(self, what):
-        self.val_appending(self.val, what)
-
-
 class UsefulObj:
     args_trick = []
 
