@@ -12,9 +12,7 @@ class Operator(UsefulObj):
 class CompSingCopyOperator(Operator):
     def __init__(self, op: Operator, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.level = op.level
-        self.sides = op.sides
-        self.func = op.func
+        self.import_from_parent(op, ("level", "sides", "func"))
 
     rev: bool = False
     from_heaven = []
