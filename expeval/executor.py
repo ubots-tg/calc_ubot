@@ -41,14 +41,19 @@ class Executor:
         end_bracket = self.procedure.config.brackets[bracket]
         if mode == 1:
             p = sti
-            _tuple = []
+            res = set() if bracket == "{" else []
+            sectors_count = 0
             while True:
-                elem = self.brackets(sti, bracket, 2)
-                _tuple.append(elem)
+                elem = self.brackets(p, bracket, 2)
+                if bracket == "{":
+                    res.add(elem)
+                else:
+                    res.append(elem)
+                sectors_count += 1
                 if self.env[p].token == end_bracket:
                     break
                 p += 2
-            self.replace_range(sti, 2 * len(_tuple) + 1, _tuple)
+            self.replace_range(sti, 2 * sectors_count + 1, res)
         else:
             p = sti + 1
             while True:
