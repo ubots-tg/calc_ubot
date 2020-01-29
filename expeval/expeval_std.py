@@ -3,6 +3,13 @@ from typing import Tuple, Callable, List
 from ulib.useful import UsefulObj
 
 
+class ExitSignal(Exception):
+    """
+If you want to exit testing shell, you should write operator exit.
+It will send ExitSignal and exit from testing shell
+    """
+
+
 class Operator(UsefulObj):
     level: int
     sides: Tuple[bool, bool, bool]
@@ -76,11 +83,11 @@ def exgcd(a, b):
     return x, y - (a // b) * x, gcd
 
 
-# def addition(a, b, c):
-#     # print(a, b, c)
-#     return a + b * c
+def send_exit_signal_to_testing_shell():
+    raise ExitSignal("exiting from testing shell")
 
 
+# TODO: isolate names and word_operators like were isolated names and char operators
 std_names = Namespace(cont={
     "comb": Namespace(cont={
         "comb_c": cnpk
@@ -91,7 +98,8 @@ std_names = Namespace(cont={
     "mod": Operator(level=1, sides=(True, True, True), func=lambda a, bl, c: a % bl[0] == c % bl[0]),
     "sqrt": math.sqrt,
     "__multiplication__": Operator(level=2, sides=(True, False, True), func=lambda a, b: a * b),
-    "__division__": Operator(level=2, sides=(True, False, True), func=lambda a, b: a / b)
+    "__division__": Operator(level=2, sides=(True, False, True), func=lambda a, b: a / b),
+    "exit": Operator(level=0, sides=(False, False, False), func=send_exit_signal_to_testing_shell)
 })
 
 std_specific_operators = {

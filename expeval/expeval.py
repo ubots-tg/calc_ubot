@@ -1,6 +1,8 @@
 from queue import Queue
+import time
+from colorama import Fore
 from typing import Dict, Tuple
-from expeval.expeval_std import std_names, std_specific_operators, CharOperator, Namespace, Operator
+from expeval.expeval_std import std_names, std_specific_operators, CharOperator, Namespace, Operator, ExitSignal
 from ulib.killable_thread import KillableThread
 
 
@@ -79,6 +81,25 @@ class ExpEval:
             return q.get()
         except Exception as err:
             return err.__class__.__name__ + " " + str(err), "", False
+
+    def run_testing_shell(self):
+        # TODO: replace this to other file
+        while True:
+            query = input(Fore.CYAN + "> " + Fore.RESET)
+            try:
+                result, pretty_result, success = ExpEvalProcedure(self, query)()
+                if success:
+                    print(f"{Fore.YELLOW}%s{Fore.RESET}={Fore.GREEN}%s{Fore.RESET}={Fore.MAGENTA}%s{Fore.RESET}" % (query, result, pretty_result))
+                else:
+                    pretty_result(f"{Fore.RED}%s{Fore.RESET}" % result)
+            except Exception as err:
+                if isinstance(err, ExitSignal):
+                    break
+                else:
+                    print(Fore.RED, end="")
+                    print("О нет! %s!" % err.__class__.__name__)
+                    print(err)
+                    print(Fore.RESET, end="")
 
 
 class ExpEvalProcedure:
