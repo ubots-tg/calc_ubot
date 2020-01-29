@@ -104,7 +104,7 @@ class Executor:
                         wrd_tok = self.env[p + 1]
                         if not(isinstance(ns, Namespace) and wrd_tok.word):
                             raise Exception("Point that doesn't bind namespace and link at place % d" % tk.st)
-                        next_val = Namespace.try_std_op_to_this(ns[wrd_tok.tok])
+                        next_val = Namespace.try_std_op_to_this(ns[wrd_tok.token])
                         p -= 1
                         self.replace_range(p, 3, next_val)
                 p += 1

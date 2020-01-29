@@ -27,6 +27,8 @@ class Tokenizer:
                         self.char_types[p] = i
                         break
                 else:
+                    # print(self.query[p])
+                    # print(self.is_latin(self.query[p]))
                     raise Exception("Innocent symbol %s at pos %d" % (ch, p + 1))
         else:
             return "\x00", 4
@@ -34,7 +36,7 @@ class Tokenizer:
 
     @staticmethod
     def is_latin(char: str):
-        return (ord("a") <= ord(char) <= ord("z")) or char == "_"
+        return (ord("a") <= ord(char.lower()) <= ord("z")) or char == "_"
 
     @staticmethod
     def is_digit(char: str):
