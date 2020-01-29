@@ -34,8 +34,7 @@ class Tokenizer:
 
     @staticmethod
     def is_latin(char: str):
-        char = ord(char.lower())
-        return (ord("a") <= char <= ord("z")) or char == "_"
+        return (ord("a") <= ord(char) <= ord("z")) or char == "_"
 
     @staticmethod
     def is_digit(char: str):
