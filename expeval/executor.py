@@ -50,14 +50,8 @@ class Executor:
                 p += 2
             self.replace_range(sti, 2 * len(_tuple) + 1, _tuple)
         else:
-            # print(end_bracket)
             p = sti + 1
             while True:
-                # print("===================")
-                # for tk_or_wtf in self.env:
-                #     print(tk_or_wtf)
-                # print(p)
-                # print("===================")
                 if isinstance(self.env[p], Token):
                     tk: Token = self.env[p]
                     if tk.token == end_bracket:
@@ -74,11 +68,8 @@ class Executor:
                             char_op = self.procedure.config.specific_operators[op_writing]
                             new_transformed_sing_op = CompSingCopyOperator(self.procedure.config.names[char_op.replace])
                             transformed.append(new_transformed_sing_op)
-                            # print(char_op.from_heaven)
                             transformed[-1].rev = rev
                             transformed[-1].from_heaven = char_op.from_heaven
-                            # print(list(map(lambda x: x.from_heaven, transformed)))
-                        # print(id(transformed[0]), id(transformed[1]))
                         self.env.insert(p, CompOperator(branches=transformed))
                     elif tk.val:
                         # TODO: rename Token.val to Token.integer. Maybe i will add strings
@@ -118,14 +109,12 @@ class Executor:
                     elif isinstance(self.env[p], CompOperator):
                         operator: CompOperator = self.env[p]
                         if operator.get_level() == cur_level:
-                            # print(operator.branches[0].sides)
                             # left, right, dop, from_heaven
                             dop_information = []
                             left_n_right = []
                             if operator.model.sides[1]:
                                 # Нам не мешает никак
                                 dop_information = self.env.pop(p + 1)
-                                # print("+")
                             if operator.model.sides[0]:
                                 left_n_right.append(self.env.pop(p - 1))
                                 p -= 1
@@ -133,11 +122,9 @@ class Executor:
                                 left_n_right.append(self.env.pop(p + 1))
 
                             if operator.branches.__len__() == 1:
-                                # print(dop_information)
                                 op_res = self.execute_single_operator(operator.model, left_n_right.copy(), dop_information)
                             else:
                                 op_res = set()
-                                # print(list(map(lambda x: x.from_heaven, operator.branches)))
                                 for single_operator in operator.branches:
                                     op_res.add(self.execute_single_operator(single_operator, left_n_right.copy(), dop_information))
                             self.replace_range(p, 1, op_res)
@@ -146,7 +133,6 @@ class Executor:
             res = self.env[sti + 1]
             if mode == 0:
                 self.replace_range(sti, 3, res)
-                # print(res)
             else:
                 return res
 
@@ -155,5 +141,4 @@ class Executor:
         self.env.append(Token(")"))
         self.brackets(0, "(", 0)
         # TODO: add pretty result
-        # print(self.env)
         return self.env[0], "", True

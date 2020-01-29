@@ -18,12 +18,10 @@ def is_from_same(itr):
 
 def uncover(obj) -> List:
     def uncover_rec(sub_obj):
-        # print(sub_obj)
         if isinstance(sub_obj, (list, tuple)):
             for el in sub_obj:
                 uncover_rec(el)
         else:
-            # print("db|u,")
             res.append(sub_obj)
     res = []
     uncover_rec(obj)

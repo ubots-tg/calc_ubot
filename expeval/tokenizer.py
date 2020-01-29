@@ -27,8 +27,6 @@ class Tokenizer:
                         self.char_types[p] = i
                         break
                 else:
-                    # print(self.query[p])
-                    # print(self.is_latin(self.query[p]))
                     raise Exception("Innocent symbol %s at pos %d" % (ch, p + 1))
         else:
             return "\x00", 4
@@ -125,7 +123,6 @@ class Tokenizer:
         self.split_to_tokens()
         tokenizer_fixer = TokenizerFixer(self)
         self.tokens = tokenizer_fixer()
-        # print(self.tokens)
         return self.tokens
 
 
