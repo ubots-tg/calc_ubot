@@ -7,7 +7,15 @@ class Operator(UsefulObj):
     level: int
     sides: Tuple[bool, bool, bool]
     func: Callable
-    # TODO: create new class CompSingleOperator to remove this crutch
+
+
+class CompSingCopyOperator(Operator):
+    def __init__(self, op: Operator, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.level = op.level
+        self.sides = op.sides
+        self.func = op.func
+
     rev: bool = False
     from_heaven = []
 
@@ -20,7 +28,7 @@ class CharOperator(UsefulObj):
 
 
 class CompOperator(UsefulObj):
-    branches: List[Operator]
+    branches: List[CompSingCopyOperator]
     args_trick = ["branches"]
 
     def __init__(self, *args, **kwargs):
@@ -29,10 +37,6 @@ class CompOperator(UsefulObj):
 
     def get_level(self):
         return min(map(lambda op: op.level, self.branches))
-
-    @staticmethod
-    def try_std_op_to_this(maybe_op):
-        return CompOperator(branches=[maybe_op]) if isinstance(maybe_op, Operator) else maybe_op
 
 
 class Namespace(UsefulObj):
@@ -44,6 +48,13 @@ class Namespace(UsefulObj):
         if len(sp_res) == 1:
             return in_me
         return in_me.apply_path(sp_res[1])
+
+    @staticmethod
+    def try_std_op_to_this(maybe_op):
+        if isinstance(maybe_op, Operator):
+            return CompOperator(branches=[CompSingCopyOperator(maybe_op)])
+        else:
+            return maybe_op
 
     def __iter__(self):
         return self.cont.__iter__()
@@ -65,6 +76,11 @@ def exgcd(a, b):
         return 1, 0, a
     y, x, gcd = exgcd(b, a % b)
     return x, y - (a // b) * x, gcd
+
+
+# def addition(a, b, c):
+#     # print(a, b, c)
+#     return a + b * c
 
 
 std_names = Namespace(cont={

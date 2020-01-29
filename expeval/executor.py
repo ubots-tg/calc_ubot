@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from expeval.expeval import ExpEvalProcedure, Token
-from expeval.expeval_std import Namespace, Operator, CompOperator
+from expeval.expeval_std import Namespace, Operator, CompOperator, CompSingCopyOperator
 
 
 class Executor:
@@ -17,7 +17,7 @@ class Executor:
         # print("+", start, length, value, self.env)
 
     @staticmethod
-    def execute_single_operator(single_operator: Operator, left_n_right, dop):
+    def execute_single_operator(single_operator: CompSingCopyOperator, left_n_right, dop):
         if single_operator.rev:
             left_n_right = left_n_right[::-1]
         # print(left_n_right + dop + single_operator.from_heaven)
@@ -25,6 +25,7 @@ class Executor:
         # print(dop)
         # print(single_operator.from_heaven)
         op_func_result = single_operator.func(*(left_n_right + dop + single_operator.from_heaven))
+        # print(op_func_result)
         return op_func_result
 
     def brackets(self, sti, bracket, mode):
@@ -68,12 +69,16 @@ class Executor:
                             raise Exception("Are you stupid? Wtf a separator doing here (%d)" % tk.st)
                     elif tk.op:
                         br = self.env.pop(p).token
-                        transformed: List[Operator] = []
-                        for op_path, rev in br:
-                            char_op = self.procedure.config.specific_operators[op_path]
-                            transformed.append(self.procedure.config.names[char_op.replace])
+                        transformed: List[CompSingCopyOperator] = []
+                        for op_writing, rev in br:
+                            char_op = self.procedure.config.specific_operators[op_writing]
+                            new_transformed_sing_op = CompSingCopyOperator(self.procedure.config.names[char_op.replace])
+                            transformed.append(new_transformed_sing_op)
+                            # print(char_op.from_heaven)
                             transformed[-1].rev = rev
                             transformed[-1].from_heaven = char_op.from_heaven
+                            # print(list(map(lambda x: x.from_heaven, transformed)))
+                        # print(id(transformed[0]), id(transformed[1]))
                         self.env.insert(p, CompOperator(branches=transformed))
                     elif tk.val:
                         # TODO: rename Token.val to Token.integer. Maybe i will add strings
@@ -92,14 +97,14 @@ class Executor:
                         self.brackets(p, tk.token, 1)
                     elif tk.word:
                         from_root_val = self.procedure.config.names[self.env.pop(p).token]
-                        self.env.insert(p, CompOperator.try_std_op_to_this(from_root_val))
+                        self.env.insert(p, Namespace.try_std_op_to_this(from_root_val))
                     elif tk.token == ".":
                         # At this place, point is using only to use "namespaces".
                         ns = self.env[p - 1]
                         wrd_tok = self.env[p + 1]
                         if not(isinstance(ns, Namespace) and wrd_tok.word):
                             raise Exception("Point that doesn't bind namespace and link at place % d" % tk.st)
-                        next_val = CompOperator.try_std_op_to_this(ns[wrd_tok.tok])
+                        next_val = Namespace.try_std_op_to_this(ns[wrd_tok.tok])
                         p -= 1
                         self.replace_range(p, 3, next_val)
                 p += 1
@@ -132,6 +137,7 @@ class Executor:
                                 op_res = self.execute_single_operator(operator.model, left_n_right.copy(), dop_information)
                             else:
                                 op_res = set()
+                                # print(list(map(lambda x: x.from_heaven, operator.branches)))
                                 for single_operator in operator.branches:
                                     op_res.add(self.execute_single_operator(single_operator, left_n_right.copy(), dop_information))
                             self.replace_range(p, 1, op_res)

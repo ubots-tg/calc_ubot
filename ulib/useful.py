@@ -10,6 +10,7 @@ def is_from_same(itr):
 
 
 class UsefulObj:
+    # TODO: add cool features
     args_trick = []
 
     def __init__(self, *args, **kwargs):
