@@ -68,7 +68,9 @@ class Namespace(UsefulObj):
         return self.apply_path(item)
 
 
-def cnpk(n, k):
+def cnpk(k, n):
+    k = int(k)
+    n = int(n)
     res = 1
     for u in range(n, n - k, -1):
         res *= u

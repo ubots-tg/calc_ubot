@@ -14,18 +14,12 @@ class Executor:
             self.env.pop(start)
             cleaning_progress += 1
         self.env.insert(start, value)
-        # print("+", start, length, value, self.env)
 
     @staticmethod
     def execute_single_operator(single_operator: CompSingCopyOperator, left_n_right, dop):
         if single_operator.rev:
             left_n_right = left_n_right[::-1]
-        # print(left_n_right + dop + single_operator.from_heaven)
-        # print(left_n_right)
-        # print(dop)
-        # print(single_operator.from_heaven)
         op_func_result = single_operator.func(*(left_n_right + dop + single_operator.from_heaven))
-        # print(op_func_result)
         return op_func_result
 
     def brackets(self, sti, bracket, mode):
@@ -45,14 +39,15 @@ class Executor:
             sectors_count = 0
             while True:
                 elem = self.brackets(p, bracket, 2)
+                # Crutch
                 if bracket == "{":
                     res.add(elem)
                 else:
                     res.append(elem)
                 sectors_count += 1
+                p += 2
                 if self.env[p].token == end_bracket:
                     break
-                p += 2
             self.replace_range(sti, 2 * sectors_count + 1, res)
         else:
             p = sti + 1
@@ -86,7 +81,7 @@ class Executor:
                         self.brackets(p, tk.token, 1 if called_by_func or called_by_operator else 0)
                         if called_by_func:
                             p -= 1
-                            func_res = self.env[p](self.env[p + 1])
+                            func_res = self.env[p](*(self.env[p + 1]))
                             self.replace_range(p, 2, func_res)
                     elif tk.token in self.procedure.config.brackets:
                         # Other brackets
