@@ -1,6 +1,7 @@
 from colorama import Fore
 import time
-from . import ExpEval, ExpEvalProcedure, ExitSignal
+from . import ExpEval, ExpEvalProcedure
+from .ulib import Signal
 
 
 if __name__ == '__main__':
@@ -14,12 +15,14 @@ if __name__ == '__main__':
             print(f"{Fore.YELLOW}%s{Fore.RESET}={Fore.GREEN}%s{Fore.RESET}={Fore.MAGENTA}%s{Fore.RESET}" % (query, result, pretty_result))
             print("It took %d seconds to execute" % (time_ready - time_start))
         except Exception as err:
-            if isinstance(err, ExitSignal):
-                break
+            if isinstance(err, Signal):
+                err: Signal
+                if err.name == "exit":
+                    break
             else:
                 print(Fore.RED, end="")
                 print("Oh no! %s!" % err.__class__.__name__)
                 print(err)
                 print(Fore.RESET, end="")
 else:
-    print("Ты дурачок?")
+    print("Ты паровозик?")

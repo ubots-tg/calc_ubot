@@ -1,7 +1,8 @@
 from queue import Queue
 from colorama import Fore
 from typing import Dict, Tuple
-from .expeval_std import std_names, std_specific_operators, CharOperator, Namespace, Operator, ExitSignal
+from .expeval_std import std_names, std_specific_operators, CharOperator, Namespace, Operator
+from .ulib import Signal
 from .ulib.killable_thread import KillableThread
 
 

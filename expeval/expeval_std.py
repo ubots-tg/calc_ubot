@@ -1,13 +1,13 @@
 import math
 from typing import Tuple, Callable, List
-from .ulib.useful import UsefulObj
+from .ulib.useful import UsefulObj, Signal
 
 
-class ExitSignal(Exception):
-    """
-If you want to exit testing shell, you should write operator exit.
-It will send ExitSignal and exit from testing shell
-    """
+# class ExitSignal(Exception):
+#     """
+# If you want to exit testing shell, you should write operator exit.
+# It will send ExitSignal and exit from testing shell
+#     """
 
 
 class Operator(UsefulObj):
@@ -84,7 +84,7 @@ def exgcd(a, b):
 
 
 def send_exit_signal_to_testing_shell():
-    raise ExitSignal("exiting from testing shell")
+    raise Signal("exit", "exiting from testing shell")
 
 
 # TODO: isolate names and word_operators like were isolated names and char operators

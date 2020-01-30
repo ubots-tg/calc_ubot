@@ -12,10 +12,6 @@ def is_from_same(itr):
     return True
 
 
-# def isiterable(obj):
-#     return hasattr(obj, '__iter__')
-
-
 def uncover(obj) -> List:
     def uncover_rec(sub_obj):
         if isinstance(sub_obj, (list, tuple)):
@@ -43,3 +39,16 @@ class UsefulObj:
         for key in keys:
             val = getattr(pr_obj, key, None)
             setattr(self, key, val)
+
+
+class Signal(Exception):
+    """Signal for testing shell"""
+    name: str
+    description: str
+
+    def __init__(self, nm, desc):
+        self.name = nm
+        self.description = desc
+
+    def __repr__(self):
+        return f"{self.name} signal: {self.description}"
