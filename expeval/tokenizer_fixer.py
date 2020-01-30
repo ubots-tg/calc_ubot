@@ -1,6 +1,6 @@
 from typing import List
-from expeval.expeval import Token
-from expeval.tokenizer import Tokenizer
+from .expeval import Token
+from .tokenizer import Tokenizer
 
 
 class TokenizerFixer:

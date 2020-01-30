@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from expeval.expeval import ExpEvalProcedure, Token
-from ulib.useful import is_from_same
+from .expeval import ExpEvalProcedure, Token
+from .ulib.useful import is_from_same
 
 
 class Tokenizer:
@@ -126,4 +126,4 @@ class Tokenizer:
         return self.tokens
 
 
-from expeval.tokenizer_fixer import TokenizerFixer
+from .tokenizer_fixer import TokenizerFixer

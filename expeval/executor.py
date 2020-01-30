@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from expeval.expeval import ExpEvalProcedure, Token
-from expeval.expeval_std import Namespace, Operator, CompOperator, CompSingCopyOperator
+from .expeval import ExpEvalProcedure, Token
+from .expeval_std import Namespace, Operator, CompOperator, CompSingCopyOperator
 
 
 class Executor:
@@ -146,4 +146,4 @@ class Executor:
         self.env.append(Token(")"))
         self.brackets(0, "(", 0)
         # TODO: add pretty result
-        return self.env[0], "", True
+        return self.env[0], ""

@@ -1,6 +1,6 @@
 import math
 from typing import Tuple, Callable, List
-from ulib.useful import UsefulObj
+from .ulib.useful import UsefulObj
 
 
 class ExitSignal(Exception):
