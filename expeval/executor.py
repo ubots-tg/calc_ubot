@@ -62,7 +62,7 @@ class Executor:
                     if tk.token == end_bracket:
                         break
                     elif tk.token == self.procedure.config.sep:
-                        if mode == 3:
+                        if mode == 2:
                             break
                         else:
                             raise Exception("Are you stupid? Wtf a separator doing here (%d)" % tk.st)
