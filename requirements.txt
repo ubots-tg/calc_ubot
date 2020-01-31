@@ -1,3 +1,3 @@
 python-telegram-bot
 pysocks
-colorama
+gg69-super-calc-engine
