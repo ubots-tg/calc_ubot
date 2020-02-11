@@ -29,11 +29,11 @@ def start(update: Update, context: CallbackContext):
 
 def inline_query(update: Update, context: CallbackContext):
     global expr_evaluator
-    logger.info("inline_query " + update.inline_query.query)
+    logger.debug("inline_query " + update.inline_query.query)
     query = update.inline_query.query
     result, success = expr_evaluator.comp_exp(query)
     query_results = []
-    if success:
+    if expr_evaluator.is_this_code_for_sending_result(success):
         query_results.append(
             InlineQueryResultArticle(
                 id=uuid4(),
@@ -45,14 +45,14 @@ def inline_query(update: Update, context: CallbackContext):
 
 
 def dm_query(update: Update, context: CallbackContext):
-    logger.info("dm_query " + update.message.text)
+    logger.debug("dm_query " + update.message.text)
     global expr_evaluator
     query = update.message.text
     result, success = expr_evaluator.comp_exp(query)
-    if success:
+    if expr_evaluator.is_this_code_for_sending_result(success):
         update.message.reply_text(f'{query} = <b>{result}</b>', parse_mode='HTML')
-    else:
-        update.message.reply_text(f'<b>Error:</b> {result}', parse_mode='HTML')
+    # else:
+    #     update.message.reply_text(f'<b>Error:</b> {result}', parse_mode='HTML')
 
 
 def error(update: Update, context: CallbackContext):
