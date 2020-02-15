@@ -1,3 +1,3 @@
 python-telegram-bot
 pysocks
-gg69-super-calc-engine==2.2
+gg69-super-calc-engine==2.2.1
